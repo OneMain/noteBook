@@ -1,0 +1,20 @@
+=====================cookies=======================================
+Cookies是浏览器的功能，可以将资料存在浏览器上，并且之后每隔request 请求。浏览器都会将cookie送回到服务器，来追踪不同的用户。
+
+signed 对cookie数据进行加密(会用config/secrets.yml这个档案里面设定的金钥来做对称式加密)
+
+=======================sessions================================
+http是无状态通讯，为了能够让浏览器在跨请求之间记住信息。rails提供了session，用来记录登录状态等等
+session的院里基本上也是利用浏览器的cookie来追踪requests请求。
+
+
+=============session storage===
+
+rails默认采用cookie session storage来存储session资料。
+是将session 通过secret_key_base加密编码后放在浏览器的cookie中
+
+优点：是对服务器的效能负担很低
+缺点：对多能存4kb
+
+解决方法： active_record_store 使用数据库来存储
+           memchache_store 使用memechache来存储，适合高流量的网站

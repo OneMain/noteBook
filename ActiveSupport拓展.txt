@@ -1,0 +1,28 @@
+Content-Type: text/x-zim-wiki
+Wiki-Format: zim 0.4
+Creation-Date: 2015-10-17T14:58:44+08:00
+
+====== Rails 扩展的功能 ======
+详细信息：
+http://guides.rubyonrails.org/active_support_core_extensions.html
+
+词形变化
+  pluralize : 复数形式
+  singularize： 单数形式
+  camelize : 驼峰式
+     'active_record/errors'.camelize(:lower) # => "activeRecord::Errors"
+  underscore： 驼峰式转成蛇底式
+    "Backoffice::Session".underscore # => "backoffice/session"
+  titleize : 单词首字母大写
+  dasherize： 下划线替换成连字符：
+
+  parameterize： "John Smith".parameterize # => "john-smith"
+       如果想使用自定义的分隔符，覆盖 separator 参数。
+  tableize 对应的表名
+  classify  对应的model名
+
+  
+
+==============注意================
+  classify 方法返回的类名是字符串。
+   你可以调用 constantize 方法，得到真正的类对象，如下一节所述。

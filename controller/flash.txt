@@ -1,0 +1,22 @@
+=====================================flash================================
+ 用处在于redirect时，能够从这个request传递文字讯息到笑一个请求
+
+ 使用过一次之后，Rails就会自动清除flash。
+
+================本次请求传递=======
+
+ 在本次请求就想获取携带信息可以使用
+
+  flash.now[:notice] = 'footbar'
+
+
+=================自定义flash======
+
+ application_controller.rb
+ 
+   add_flash_types :warning
+
+ in your controller
+    redirect_to user_path(@user),warning: "okokkokokoko"
+in your view
+  <%= warning %>

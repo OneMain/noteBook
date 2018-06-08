@@ -1,0 +1,11 @@
+====================filter=======================
+ before_action、after_action和around_action，其中before_action最为常用
+
+ before_action最常用于准备跨Action共享的资料，或是使用者权限验证等等
+
+=========filter顺序==============
+
+当有多个filter,rails会由上往下依顺序执行。
+如果需要加到第一个执行。可以使用prepend_before_action
+
+取消从父类继承来的filter： skip_before_action :filter_name

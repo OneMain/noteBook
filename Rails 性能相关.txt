@@ -1,0 +1,72 @@
+
+====== 性能 ===========
+
+==== N+1 ====
+clients.each do |client|
+ client.address.postcode
+end
+
+**解决方案**：提前加载model关系，让ActiveRecord预先加载所需要的数据
+1： includes
+2： preload
+3： eager_load
+=======================================================联结表==============================================
+Active Record 提供了 joins 和 left_outer_joins 这两个查找方法，用于指明生成的 SQL 语句中的 JOIN 子句。其中，joins 方法用于 INNER JOIN 查询或定制查询，left_outer_joins 用于 LEFT OUTER JOIN 查询。
+===========================================================================================================
+
+N + 1 查询问题：
+=======取出了并不需要的内容===========
+
+==== 不需要的栏位 ====
+ActiveRecord預設的SQL會把所有欄位的資料都讀取出來，如果其中有text或binary欄位資料量很大，就會每次都占用很多不必要的記憶體拖慢效能。
+
+**解决方案**： select, pluck
+
+==== eager loading的内容只用来查询====
+Group.includes(:group_memberships).where( ["group_memberships.created_at > ?", Time.now - 30.days ] )
+
+**解决方案： **用joins替代includes
+Group.joins(:group_memberships).where( ["group_memberships.created_at > ?", Time.now - 30.days ] )
+
+===== 不要选取太多的记录到内存中 =====
+
+==== Batch finding ====
+用了all.each方法取出了所有记录
+
+**解决方案**： 用find_each替代 all.each
+
+==== 嵌套的includes ====
+category.includes(articles: [{ comments: :guest }, :tags]).find(1)
+上面的代码会查找 ID 为 1 的分类，并及早加载所有关联的文章、这些文章关联的标签和评论，以及这些评论关联的访客。
+
+
+==== counter cache ====
+适合记录是逐渐增加的情况。例如发贴。不适合数据是大量导入的情况。
+class SubProject < ApplicationRecord
+  belongs_to : project, counter_cache: true
+end
+===== 自动应用的transation =====
+save, create, destroy等被自动包含在transation内，如果是相关的这类动作，可以包含在一个transation内。省去过多的transaction打开/关闭操作。
+
+my_collection.each do |q|
+  Quote.create({:phrase => q})
+end
+
+# Add transaction
+Quote.transaction do
+  my_collection.each do |q|
+    Quote.create({:phrase => q})
+ end
+end
+
+=== Use Constant for domain data 不变的内容，可以放在常量里 ===
+	class Rating < ActiveRecord::Base
+		  G  = Rating.find_by_name('G')
+		  PG = Rating.find_by_name('PG')
+		  R  = Rating.find_by_name('R')
+		  #....  
+	end
+
+===========================其它性能相关=======================================================================
+  Nginx缓存
+  https://ihower.tw/blog/archives/1691

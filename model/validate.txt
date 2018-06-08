@@ -1,0 +1,87 @@
+====================================Model Validate====================================
+
+Created 星期五 14 七月 2017
+
+
+
+==================validates=====================
+
+查看Model的验证有哪些
+User.validators
+
+==> [#<ActiveModel：：Validations::PresenceValidator:0x182c494 @attributes=[:email] @options={}>]
+
+User.validates_on(:email)
+
+==> [#<ActiveModel：：Validations::PresenceValidator:0x182c494 @attributes=[:email] @options={}>]
+
+===========view 中添加 *===========
+
+<%= mark_required(@user, :email) %>
+
+def mark_required(object, attribute)
+  "*" if object.class.validators_on(attribute).map(&:class).include? ActiveModel::Validations::PresenceValidator
+end
+
+==========自定义validates==========
+
+ validates :email, presence: true, uniqueness: true, :format => {:with => /^([^@\s]+)@((?:[-a-z0-9]+\.)+[a-z]{2,})$/i}
+
+ 调整后：
+
+ 可以将format提取出来
+
+ lib/email_format_validator.rb
+validate 源码会根据给出的参数去调用 ActiveModel::EachValidator的子类，调用validate_each
+
+class EmailFormatValidator < ActiveModel::EachValidator
+  def validate_each(object, attribute, value)
+    unless value =~ /^([^@\s]+)@((?:[-a-z0-9]+\.)+[a-z]{2,})$/i
+      object.errors[attribute] << (options[:message] || "is not formatted properly") 
+    end
+  end
+end
+
+model中
+
+validates :email, presence: true, uniqueness: true, email_format: true
+
+
+==============validates 源码=========================
+
+
+      #   class Film
+      #     include ActiveModel::Validations
+      #
+      #     class TitleValidator < ActiveModel::EachValidator
+      #       def validate_each(record, attribute, value)
+      #         record.errors.add attribute, "must start with 'the'" unless value =~ /\Athe/i
+      #       end
+      #     end
+      #
+      #     validates :name, title: true
+      #   end
+
+
+    def validates(*attributes)
+        defaults = attributes.extract_options!.dup
+        validations = defaults.slice!(*_validates_default_keys)
+
+        raise ArgumentError, "You need to supply at least one attribute" if attributes.empty?
+        raise ArgumentError, "You need to supply at least one validation" if validations.empty?
+
+        defaults[:attributes] = attributes
+
+        validations.each do |key, options|
+          next unless options
+          key = "#{key.to_s.camelize}Validator"
+
+          begin
+            validator = key.include?("::".freeze) ? key.constantize : const_get(key)
+          rescue NameError
+            raise ArgumentError, "Unknown validator: '#{key}'"
+          end
+
+          validates_with(validator, defaults.merge(_parse_validates_options(options)))
+        end
+      end

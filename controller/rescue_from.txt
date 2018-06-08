@@ -1,0 +1,26 @@
+========================rescue_from======================
+那些没有被拦截到的错误例外，使用者会看到Rails默认的500错误画面。
+rescue_from 可以在controoler中捕获异常，该应用指定的方法处理
+
+
+class ApplicationController < ActionController::Base
+
+   def self.rescue_errors
+     rescue_from Exception,                            :with => :render_error
+     rescue_from RuntimeError,                         :with => :render_error
+     rescue_from ActiveRecord::RecordNotFound,         :with => :render_not_found
+     rescue_from ActionController::RoutingError,       :with => :render_not_found
+     rescue_from ActionController::UnknownController,  :with => :render_not_found
+     rescue_from ActionController::UnknownAction,      :with => :render_not_found
+   end
+   rescue_errors unless Rails.env.development?
+
+   def render_not_found(exception = nil)
+     render :template => "errors/404", :status => 404, :layout => 'public'
+   end
+
+   def render_error(exception = nil)
+     render :template => "errors/500", :status => 500, :layout => 'public'
+   end
+
+end

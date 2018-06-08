@@ -1,0 +1,115 @@
+===============================view_helper======================================
+created 星期四 9 4月 2015
+
+
+===================产生html标签======================
+
+
+==========link_to =============
+   link_to  显示内容，连接地址， 其他参数 -> <a href></a>
+
+==== css ====
+
+   stylesheet_link_tag 路径 -> 	<link type='text/css' />
+
+==== js ====
+
+    javascript_include_tag 路径 ->  <script type="text/javascript" src ></script>
+
+==========img=========================================
+  
+   img_tag 图片路径 alt  -> <img src alt >
+
+===============asset pipeline============
+
+三个特性：
+ 1：连接静态资源文件，目的是减少渲染网页时浏览器发起的请求次数
+ 2：简化或压缩静态资源文件
+ 3： 可以使用更高级的语言编写静态资源文件，再通过预编译转换为实际的静态资源文件
+
+
+
+=======yield 和layout=====================
+
+=======layout ============
+  查找顺序：
+
+   默认情况下，controller 对应的同名layout ，没有则使用layout/application
+
+   指定layout
+   class ProductsController < ApplicationController
+     layout "inventory"
+     #...
+    end
+
+
+=====为action选择layout=====
+
+except和only参数
+
+  layout :admin. except: [:edit,:new]
+
+
+====为controller 动态原则layout===
+
+class ProductsController < ApplicationController
+  layout :products_layout
+
+  def show
+    @product = Product.find(params[:id])
+  end
+
+  private
+    def products_layout
+      @current_user.special? ? "special" : "products"
+    end
+
+end
+
+====特殊情况特殊对待===
+
+问题： 如果当前用户是特殊用户，会使用一个特殊布局渲染产品视图。
+解决方案： 可以使用行间proc决定使用哪个布局，如果是proc，其代码块可以访问controoler实例，这样就能根据当前请求决定使用哪个布局。
+
+class ProductsController < ApplicationController
+  layout Proc.new { |controller| controller.request.xhr? ? "popup" : "application" }
+end
+
+controller：代码当前ProducsController的实例。
+
+
+==========为render 选择layout ==========
+
+从控制器角度来看，http响应有3中方法
+ 1： render 想浏览器发送一个完整的响应
+
+ 2： redirecct_to ,想浏览器发送一个http重定向状态码
+
+ 3： head 方法。向浏览器发送只含http头部响应
+
+
+
+:layout 当前动作中使用指定的lauout：
+
+render layout: "special_layout"
+
+不使用 layout
+
+render layout: false
+
+
+========如何使用 Asset Pipeline===========
+
+ 在Rails早期版本中，所有的静态资源文件都放在public下
+ 当开始用asset pipeline 后，推荐把静态资源文件放在app/assets,使用Sprockets 中间件处理这些文件
+
+ 配置了 config.public_file_server.enabled = true, 会把文件自动放在public下
+
+ asset pipleline 路径：
+  1： app/asset 、 lib/asset 、 vendor/asset
+
+  2：在 Rails 控制台中检查 Rails.application.config.assets.paths  路径。
+ 
+  3： 拓展 config.assets.paths << Rails.root.join("lib", "videoplayer", "flash")
+
+  4： app/assets 中的文件优先级最高，将会遮盖 lib 和 vendor 文件夹中的同名文件。

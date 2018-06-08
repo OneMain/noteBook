@@ -1,0 +1,77 @@
+========文件目录===================
+lib/
+   一些共享的类别或模组，可以放在这里，然后用require加载。
+   例如一个放在lib/foobar.rb的类别或模组档案，可以在要使用的.rb档案中这样加载：
+   require "foobar"
+   如果放在子目录lib/foo/bar.rb的话：
+    require "foo/bar"
+lib/tasks
+   Rake 任务档案存放在这里
+
+=============config设置=============
+ 1：filter_paramsters 
+
+ 可以避免任何叫做 password 的参数值记录到 log 中，有效防止使用者的原始密码外洩到 log 档案
+ Rails.application.config.filter_parameters += [:password]
+
+2： inflections
+
+  config/initializers/inflections.rb 
+  Inflector 就是负责将字串转换成单复数的类别
+
+3： mime_type
+    config/initializers/mime_types.rb
+  
+    Mime::Type.register 'application/xlsx', :xlsx
+
+=================development.rb===========
+1: cache_classes = false  
+
+使用 Rails 开发可以快速的原因之一，就是当你修改一个小东西，只要重新整理浏览器就可以马上看到修改后的结果。这个秘诀就在于 cache_classes = false 会让每一次的 HTTP 请求都重新加载类别档案
+
+2: config.action_controller.perform_caching = false
+   开发模式时所有人连线都可以看到错误讯息。
+
+3: config.active_support.deprecation = :log  日志记录级别
+
+====================production.rb=============
+
+1: config.cache_classes = true
+   类别档案加载进内存中就快取起来了，大大获得效能
+
+2: config.consider_all_requests_local       = false
+
+   config.action_controller.perform_caching = true
+   出现错误，不会显示程式 call stack 讯息，
+    而是回传 public/500.html 页面。
+3： config.serve_static_assets = false
+   “X-Sendfile” 是网页服务器提供的功能，可以让下载档案的动作完全委派给网页服务器
+
+4： config.force_ssl = true 
+    限制全站必须SSL才能使用
+
+
+==================bundler=============================
+
+ bundle install 检查并安装，同时产生Gemfile.lock文件
+  Gemfile.lock 档案会详细列出所有使用到的套件版本
+  把这个档案也 commit 送进版本控制系统，所有开发者的版本都一样了
+
+ bundle open gem_name 查看源码
+
+
+======================加载机制========================
+
+新增目录到Rails设定的自动加载目录，可以编辑config/application.rb
+ config.eager_load_paths += %W( #{config.root}/lib )
+启动的时候就直接加载了lib
+
+auload 和eager_load 
+前者是按需加载，后者是启动的时候就加载了
+
+rails里autoload：
+ 执行rails c
+  Rails.application.config.autoload_paths
+  Rails.application.config.eager_load_paths
+
+

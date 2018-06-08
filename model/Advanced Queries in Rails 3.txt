@@ -1,0 +1,52 @@
+=========================================scope==========================
+
+created   星期四 6 2017 
+
+======================scope================
+
+====scope 嵌套使用====
+product.rb
+
+
+belongs_to :category
+
+scope :discontinued, where(:discontinued => true)
+
+scope :cheaper_than, ->(price) { where('price < ?', price) }
+
+====更灵活一些========
+
+修改
+   scope :cheaper_than, ->(price) { where('price < ?', price) }    
+to：
+
+def self.cheaper_than(price)
+  where('projects.price < ?', price) 
+end
+
+scope :cheap, cheaper_than(5)
+
+category.rb
+has_many :products
+
+scope :with_cheap_products, joins(:products) & Product.cheap
+
+
+=======利用scope  build======
+p = Product.discontinued.build
+
+p.discontinued  => true
+
+
+=======arel_table============
+
+t = Product.arel_table
+t[:name].matches('%li%').to_sql  =>  "`products`.`name` LIKE '%li%'"
+t[:code].eq('1000').to_sql       => "products`.`code` = '1000'"
+
+Product.where(t[:code].eq('1000').or(t[:name].matches('%li%')))
+
+=> SELECT `products`.* FROM `products` WHERE (`products`.`code` = '1000' OR `products`.`name` LIKE '%li%')
+
+
+meta_where  利用的是这个功能（可以自己写个meta_where迷你功能）
