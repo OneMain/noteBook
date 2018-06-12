@@ -1,16 +1,30 @@
 ====== ActiveModel::Dirty ======
 Created 星期五 21 十一月 2014
 
-在实例化的对象中已经修改，但还没有进入数据库中时的状态，为dirty
+Dirty objects
+Dirty Objects功能可以追踪Model的属性是否有改变：
 
-person.changed?
-person.login_changed?
-person.avarta_file_name_changed?
+person = Person.find_by_name('Uncle Bob')
+person.changed?       # => false 没有改变任何值
 
-person.changed	# 哪些属性被修改
-person.changes	# 被修改的属性及修改前后的值
-person.name_change	# name属性修改前后的值
-person.name_was		# name属性修改前的值
+# 让我们来改一些值
+person.name = 'Bob'
+person.changed?       # => true 有改变
+person.name_changed?  # => true 这个属性有改变
+person.name_was       # => 'Uncle Bob' 改变之前的值
+person.name_change    # => ['Uncle Bob', 'Bob']
+person.name = 'Bill'
+person.name_change    # => ['Uncle Bob', 'Bill']
 
+# 储存进数据库
+person.save
+person.changed?       # => false
+person.name_changed?  # => false
 
-在对象已经被修改且保存之后，其previous_changes 方法记录这之前的修改，其结果类似与 changes 方法
+# 看看哪些属性改变了
+person.name = 'Bob'
+person.changed        # => ['name']
+person.changes        # => { 'name' => ['Bill', 'Bob'] }
+注意到Model资料一旦储存进数据库，追踪记录就重算消失了。
+
+什么时候会用到这个功能呢？通常是在储存进数据库前的回呼、验证或Observer中，你想根据修改了什么来做些动作，这时候Dirty Objects功能就派上用场了。

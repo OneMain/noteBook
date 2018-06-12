@@ -1,0 +1,70 @@
+
+
+===========================================transaction=============================
+
+
+事务用来确保多条SQL语句要么全部执行成功、要么不执行。
+事务作用保持数据一致性。
+
+
+
+Rails中，通过ActiveRecord对象的类方法或者实例方法即可实现事务：
+
+Client.transaction do
+  @client.users.create!
+  @user.clients(true).first.destroy!
+  Product.first.destroy!
+end
+
+@client.transaction do
+  @client.users.create!
+  @user.clients(true).first.destroy!
+  Product.first.destroy!
+end
+
+可以看出，每个事务中均含有多个不同的 model 。
+因为事务是和一个数据库连接绑定在一起的，而不是某个 model 对象；而同时，也只有在对多个纪录进行操作，并且希望这些操作作为一个整体的时候，事务才是必要的。
+
+另外，Rails 已经把类似 #save 和 #destroy 的方法包含在一个事务中了，因此，对于单条数据库记录来说，不需要再使用显式的调用了。
+
+
+
+==================事物回滚==============================================================
+
+=====单独使用==========================
+ActiveRecord::Base.transaction do
+  david = User.find_by_id(100)
+  if(david.id != product.id)
+    project.update_attributes!(:price => -100)
+    david.update_attributes!(:username => 'may')
+  end
+end
+
+find 会抛出异常 find_by不会抛出异常
+但是在2.0 只有nil.id会抛出异常,ActiveRecord::Rollback 异常跟其他异常的处理方式不一样
+
+=====嵌套使用===========================
+当你把一个 transaction 嵌套在另外一个事务之中时，就会存在父事务和子事务
+User.transaction do
+  User.create(:username => 'Kotori')
+  User.transaction(:requires_new => true) do
+    User.create(:username => 'Nemu')
+    raise ActiveRecord::Rollback
+  end
+end
+
+
+==============执行结果===========
+
+
+  (0.5ms)  begin transaction
+  SQL (0.8ms)  INSERT INTO "users" ("username", "created_at", "updated_at") VALUES (?, ?, ?)  [["username", "Kotori"], ["created_at", "2018-06-12 14:12:45.040659"], ["updated_at", "2018-06-12 14:12:45.040659"]]
+  SQL (0.2ms)  INSERT INTO "users" ("username", "created_at", "updated_at") VALUES (?, ?, ?)  [["username", "Nemu"], ["created_at", "2018-06-12 14:12:45.044747"], ["updated_at", "2018-06-12 14:12:45.044747"]]
+   (45.7ms)  commit transaction
+ => nil 
+
+ActiveRecord::Rollback 不会传播到上层的方法中去，父事务并不会收到子事务抛出的异常。
+因为子事务块中的内容也被合并到了父事务中去，因此这个例子中，两条 User 记录都会被创建！
+
+=================requires_new => true=================
+为了保证一个子事物的rollback被父事物捕获，必须手动在子事物中添加 :requires_new  => true 

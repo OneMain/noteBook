@@ -1,0 +1,72 @@
+
+===========================锁==========================
+
+  created 星期二 22 6 2018
+
+=====死锁========
+
+当一个线程永远的持有一个锁，并且其它线程尝试获取这个锁，那么它们将被永远的阻塞，这种情况被称为死锁或者抱死
+
+=====乐观锁======
+
+乐观锁是在提交事务之前，大家可以各自修改数据，但是事物提交的时候，如果发现这个过程中，数据发生了改变，那么直接拒绝此次事物的提交
+
+=====悲观锁=========
+
+悲观锁在事务开始之前就去尝试获得写的权限，事物结束之后释放锁，也就是说对于同一行数据只有一个事物可以操作。
+
+
+通俗点： 乐观锁 来来来尽管来，不行了直接踢出去
+           
+          悲观锁  看看有没有人暂用这个号，没有ok，其他人等着
+
+=====常用场景========================
+
+悲观锁场景：
+
+一般对于资源的征用都可以使用悲观锁，比如订单改价的同时可能用户正在支付，对于这中会对订单状态发生改变的操作，一般都会进行加锁处理。
+
+乐观锁场景：
+
+乐观锁在本质上算是一个利用多版本控制并发技术，和migrate和数据库中schame_migrateb表一样。
+如果事物提交之后，数据库发现传入的版本号和目前数据库中的版本号不一致，说明其他人已经修改过数据了，不再允许此次事物的提交
+
+使用乐观锁之前需要给数据库增加一列:lock_version,Rails会自动识别这一列，向数据库提交数据的时候自动带上，乐观锁默认是打开的，
+如果要关闭，需要配置。
+
+如果抛出异常需要业务层：会抛出： ActiveRecord::StaleObjectError 
+
+=======rails中 提供方法 ===============
+
+lock！
+# select * from accounts where id=1 for update
+Account.lock.find(1)
+或者： Account.find(1).lock!
+# 注意，这种最终会导致一个行锁
+
+# select * from accounts where name = 'shugo' limit 1 for update
+Account.where("name = 'shugo'").lock(true).first
+#注意：
+如果name没有索引，则锁全表。
+
+如果name 有普通索引，则锁一个区间 - range lock。
+
+如果 name 是唯一索引，仅仅锁一行。
+
+如果name 是主键，仅仅锁一行。
+
+
+with_lock
+account = Account.find(1)
+Account.transaction do
+    account.lock!
+    account.balance -= 100
+    account.save! 
+end
+
+# 和下面是等价的
+
+account.with_lock do
+    account.balance -= 100
+    account.save!
+end

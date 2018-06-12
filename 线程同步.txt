@@ -1,0 +1,163 @@
+
+=====================ruby现成同步控制（没看懂‘’‘’‘’）==========
+
+ 在ruby中有3中方式实现同步方式
+
+1. 通过Mutex类实现线程同步
+
+2. 监管数据交接的Queue类实现线程同步 
+
+3. 使用ConditionVariable实现同步控制
+
+#encoding:gbk  
+require "thread"  
+puts "Synchronize Thread"  
+  
+@num=200  
+@mutex=Mutex.new  
+  
+def buyTicket(num)  
+    @mutex.lock  
+        if @num>=num  
+            @num=@num-num  
+            puts "you have successfully bought #{num} tickets"  
+        else  
+            puts "sorry,no enough tickets"  
+        end  
+    @mutex.unlock  
+end  
+  
+ticket1=Thread.new 10 do  
+    10.times do |value|  
+    ticketNum=15  
+    buyTicket(ticketNum)  
+    sleep 0.01  
+    end  
+end  
+  
+ticket2=Thread.new 10 do  
+    10.times do |value|  
+    ticketNum=20  
+    buyTicket(ticketNum)  
+    sleep 0.01  
+    end  
+end  
+  
+sleep 1  
+ticket1.join  
+ticket2.join  
+
+程序运行的输出：
+[ruby] view plain copy
+Synchronize Thread  
+you have successfully bought 15 tickets  
+you have successfully bought 20 tickets  
+you have successfully bought 15 tickets  
+you have successfully bought 20 tickets  
+you have successfully bought 15 tickets  
+you have successfully bought 20 tickets  
+you have successfully bought 15 tickets  
+you have successfully bought 20 tickets  
+you have successfully bought 15 tickets  
+you have successfully bought 20 tickets  
+you have successfully bought 15 tickets  
+sorry,no enough tickets  
+sorry,no enough tickets  
+sorry,no enough tickets  
+sorry,no enough tickets  
+sorry,no enough tickets  
+sorry,no enough tickets  
+sorry,no enough tickets  
+sorry,no enough tickets  
+sorry,no enough tickets  
+除了使用lock锁定变量，还可以使用try_lock锁定变量，还可以使用Mutex.synchronize同步对某一个变量的访问。
+2. 监管数据交接的Queue类实现线程同步
+Queue类就是表示一个支持线程的队列，能够同步对队列末尾进行访问。不同的线程可以使用统一个对类，但是不用担心这个队列中的数据是否能够同步，另外使用SizedQueue类能够限制队列的长度
+SizedQueue类能够非常便捷的帮助我们开发线程同步的应用程序，应为只要加入到这个队列中，就不用关心线程的同步问题。
+
+经典的生产者消费者问题：
+[ruby] view plain copy
+#encoding:gbk  
+require "thread"  
+puts "SizedQuee Test"  
+  
+queue = Queue.new  
+  
+producer = Thread.new do  
+    10.times do |i|  
+        sleep rand(i) # 让线程睡眠一段时间  
+        queue << i  
+        puts "#{i} produced"  
+    end  
+end  
+  
+consumer = Thread.new do  
+    10.times do |i|  
+        value = queue.pop  
+        sleep rand(i/2)  
+        puts "consumed #{value}"  
+    end  
+end  
+  
+consumer.join  
+
+程序的输出：
+[ruby] view plain copy
+SizedQuee Test  
+0 produced  
+1 produced  
+consumed 0  
+2 produced  
+consumed 1  
+consumed 2  
+3 produced  
+consumed 34 produced  
+  
+consumed 4  
+5 produced  
+consumed 5  
+6 produced  
+consumed 6  
+7 produced  
+consumed 7  
+8 produced  
+9 produced  
+consumed 8  
+consumed 9  
+
+3. 使用ConditionVariable实现同步控制
+使用 ConditonVariable进行同步控制，能够在一些致命的资源竞争部分挂起线程直到有可用的资源为止。
+
+[ruby] view plain copy
+#encoding:gbk  
+require "thread"  
+puts "thread synchronize by ConditionVariable"  
+  
+mutex = Mutex.new  
+resource = ConditionVariable.new  
+  
+a = Thread.new {  
+    mutex.synchronize {  
+        # 这个线程目前需要resource这个资源  
+        resource.wait(mutex)   
+        puts "get resource"  
+    }  
+}  
+  
+b = Thread.new {  
+    mutex.synchronize {  
+        #线程b完成对resourece资源的使用并释放resource  
+        resource.signal  
+    }  
+}  
+  
+a.join  
+puts "complete"  
+
+mutex 是声明的一个资源，然后通过ConditionVariable来控制申请和释放这个资源。
+b 线程完成了某些工作之后释放资源resource.signal,这样a线程就可以获得一个mutex资源然后进行执行。
+执行结果：
+[html] view plain copy
+thread synchronize by ConditionVariable  
+get resource  
+complete  

@@ -1,0 +1,12 @@
+===========================Gems========================
+
+created 星期六 10 2017
+
+
+# 性能调优
+gem 'rack-mini-profiler'
+
+# 更好定位错误位置
+bettor_errors & rails pannel
+gem 'better_error'
+

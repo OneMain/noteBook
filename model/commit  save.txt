@@ -1,0 +1,4 @@
+
+after_commit 和 after_save 的区别
+
+ 如果 save 操作是在一个 transaction 中进行的，即使 transaction 失败回滚，after_save 依然会触发，但 after_commit 不会
