@@ -1,12 +1,15 @@
 ===========================Gems========================
 
-created ������ 10 2017
+created 星期六 10 2017
 
 
-# ���ܵ���
+# 性能调优
 gem 'rack-mini-profiler'
 
-# ���ö�λ����λ��
+# 更好定位错误位置
 bettor_errors & rails pannel
 gem 'better_error'
 
+#gem安装时出现 undefined method `size' for nil:NilClass (NoMethodError) 的解决办法
+得到gem的PATH路径
+将其下的cache目录删除，再次执行gem安装的时候就不会出错了 
