@@ -1,0 +1,2 @@
+migration 
+  references 会创建table_id 同时创建index
