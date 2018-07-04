@@ -1,0 +1,5 @@
+current_partner.partner_orders.
+    includes(:user, order: :transowner, partner_order_items: [:size, product: :product_images])
+    .references(:order, :partner_order_items)
+    
+其中  order: :transowner 会关联 orders.transowner_id = transowner.id
