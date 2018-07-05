@@ -1,0 +1,8 @@
+after_create
+Is called after Base.save on new objects that haven‘t been saved yet (no record exists)
+
+after_save
+Is called after Base.save (regardless of whether it‘s a create or update save)
+
+after_commit
+Is called after the database transaction is completed.
