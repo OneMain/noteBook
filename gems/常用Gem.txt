@@ -13,3 +13,8 @@ gem 'better_error'
 #gem安装时出现 undefined method `size' for nil:NilClass (NoMethodError) 的解决办法
 得到gem的PATH路径
 将其下的cache目录删除，再次执行gem安装的时候就不会出错了 
+
+# resque 
+perform_later
+  	ChangePartnerTransactionStatusJob.set(wait_until: 15.days).perform_later(partner_transaction)
+  
