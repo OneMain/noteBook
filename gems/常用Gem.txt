@@ -17,4 +17,7 @@ gem 'better_error'
 # resque 
 perform_later
   	ChangePartnerTransactionStatusJob.set(wait_until: 15.days).perform_later(partner_transaction)
+resque是多进程的，sidekiq是多线程的，相对于resque来说，sidekiq更节省内存
+resque 是对进程，sidekiq是多线程，相对于resque来说，sidekiq更节省内存
+    
   
