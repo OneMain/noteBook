@@ -1,88 +1,102 @@
 
 
+å¦‚ä½•å°†routes.rbæ‹†åˆ†æˆæ›´å°çš„éƒ¨åˆ†ï¼Ÿ
+YourApplication::Application.routes.draw do
 
-===== Â·ÓÉµÄ×÷ÓÃÊÇ£º =====
-1. ½¨Á¢**HTTP Verb+ URL**Óë**controller/actionµÄ¶ÔÓ¦¹ØÏµ¡£ÈÃÌØ¶¨µÄactionÏàÓ¦ÌØ¶¨µÄÇëÇó**
-2. Í¨¹ınamed routes¶¯Ì¬²úÉúURL (¿ÉÒÔÓÃÔÚÈÎºÎĞèÒªURLµÄµØ·½£¬ÀıÈçlink_to, redirect_to)
+def draw(routes_name)
+    instance_eval(File.read(Rails.root.join("config/routes/#{routes_name}.rb")))
+end
 
-===== ²é¿´µ±Ç°Â·ÓÉ =====
+  draw :messages
+  draw :orders
+  draw :api
+  draw :admin
+end
 
-* ²é¿´µ±Ç°routes
+è¯¦ç»†é“¾æ¥ï¼š https://blog.arkency.com/2015/02/how-to-split-routes-dot-rb-into-smaller-parts/
+  
+===== è·¯ç”±çš„ä½œç”¨æ˜¯ï¼š =====
+1. å»ºç«‹**HTTP Verb+ URL**ä¸**controller/actionçš„å¯¹åº”å…³ç³»ã€‚è®©ç‰¹å®šçš„actionç›¸åº”ç‰¹å®šçš„è¯·æ±‚**
+2. é€šè¿‡named routesåŠ¨æ€äº§ç”ŸURL (å¯ä»¥ç”¨åœ¨ä»»ä½•éœ€è¦URLçš„åœ°æ–¹ï¼Œä¾‹å¦‚link_to, redirect_to)
+
+===== æŸ¥çœ‹å½“å‰è·¯ç”± =====
+
+* æŸ¥çœ‹å½“å‰routes
 	''rake routes CONTROLLER=name''
 
-* ²é¿´Ò»¸öroute helper¶ÔÓ¦µÄpath/URL
-	ÔÚconsoleÀï£º
+* æŸ¥çœ‹ä¸€ä¸ªroute helperå¯¹åº”çš„path/URL
+	åœ¨consoleé‡Œï¼š
 		''app.helper''
-	ÀıÈç
+	ä¾‹å¦‚
 		''app.new_user_path''
 
 
 ==== URL pattern ====
 * static segment/string
-* segment key: ½øÈë''params''Êı×é
+* segment key: è¿›å…¥''params''æ•°ç»„
 * query string
 
 === Segment key ===
 
 **optional segment key**
-¿ÉÓĞ¿ÉÎŞµÄ²¿·Ö£¬¿ÉÒÔÆ¥Åä£¬Ò²¿ÉÒÔ²»Æ¥Åä
-* Ğ¡À¨ºÅ°üÎ§ÆğÀ´
+å¯æœ‰å¯æ— çš„éƒ¨åˆ†ï¼Œå¯ä»¥åŒ¹é…ï¼Œä¹Ÿå¯ä»¥ä¸åŒ¹é…
+* å°æ‹¬å·åŒ…å›´èµ·æ¥
 
-**segment keyÊı×é**
-* ·ÅÔÚ×îºóÃæ
-* ÒÔ / ·Ö¸ô³ÉÊı×é
-* ÔÚactionÖĞ·ÖÎöÕâ¸öÊı×é¡£
+**segment keyæ•°ç»„**
+* æ”¾åœ¨æœ€åé¢
+* ä»¥ / åˆ†éš”æˆæ•°ç»„
+* åœ¨actionä¸­åˆ†æè¿™ä¸ªæ•°ç»„ã€‚
 
 === query string ===
-ÎÊºÅ?ºóÃæµÄËùÓĞ×Ö·û´®½«°´**&**·ûºÅ·Ö½â³Éhash¡£
+é—®å·?åé¢çš„æ‰€æœ‰å­—ç¬¦ä¸²å°†æŒ‰**&**ç¬¦å·åˆ†è§£æˆhashã€‚
 
 ==== Options ====
-''to''	 # Ö¸ÏòÒ»¸ö**Rack endpoint¡£Ö¸¶¨ÓÃÀ´ÏìÓ¦µÄcontroller#action**
-''via''	 # ÏŞÖÆ¿É½ÓÊÜµÄHTTP Verb¡£Ä¬ÈÏ¿É½ÓÊÜËùÓĞÀà±ğ¡£get, post, delete, put
+''to''	 # æŒ‡å‘ä¸€ä¸ª**Rack endpointã€‚æŒ‡å®šç”¨æ¥å“åº”çš„controller#action**
+''via''	 # é™åˆ¶å¯æ¥å—çš„HTTP Verbã€‚é»˜è®¤å¯æ¥å—æ‰€æœ‰ç±»åˆ«ã€‚get, post, delete, put
 ''as''	 # **prefix** name of route. 
-''path	 ''# path **prefix**¡£¼ÓÔÚmatchµÄpath²ÎÊıÇ°Ãæ¡£**¾ßÓĞÀÛ¼ÓĞ§¹û**
-''constraints   #''¸øsegment keyÌí¼ÓÕıÔò±í´ïÊ½Ô¼Êø
-''on	 ''# ½öÇ¶Ì×ÔÚresouce(s)ÖĞ£¬È¡ÖµÎª:collection, :member¡£ÊÇcollection, member·½·¨µÄ¿ì½İ·½Ê½.
+''path	 ''# path **prefix**ã€‚åŠ åœ¨matchçš„pathå‚æ•°å‰é¢ã€‚**å…·æœ‰ç´¯åŠ æ•ˆæœ**
+''constraints   #''ç»™segment keyæ·»åŠ æ­£åˆ™è¡¨è¾¾å¼çº¦æŸ
+''on	 ''# ä»…åµŒå¥—åœ¨resouce(s)ä¸­ï¼Œå–å€¼ä¸º:collection, :memberã€‚æ˜¯collection, memberæ–¹æ³•çš„å¿«æ·æ–¹å¼.
 ''module	 # namespace''
-''module	 # controllerËùÊôµÄmoduleÃû³Æ''
+''module	 # controlleræ‰€å±çš„moduleåç§°''
 ''defaults # default params''
 
-=== to ²ÎÊı ===
+=== to å‚æ•° ===
 
-**redirectÂ·ÓÉ**
-* Ê¹ÓÃredirect·½·¨(²»ÊÇredirect_to)
-* ²ÎÊıÎªÒ»¸öURL»òPATH
-* ²ÎÊıÒ²¿ÉÒÔÊÇÒ»¸ölamda¡£²ÎÊıÎªparams²ÎÊı¡£¸ù¾İµ±Ç°params»·¾³£¬ÖØ¶¨Ïòµ½²»Í¬µØÖ·
+**redirectè·¯ç”±**
+* ä½¿ç”¨redirectæ–¹æ³•(ä¸æ˜¯redirect_to)
+* å‚æ•°ä¸ºä¸€ä¸ªURLæˆ–PATH
+* å‚æ•°ä¹Ÿå¯ä»¥æ˜¯ä¸€ä¸ªlamdaã€‚å‚æ•°ä¸ºparamså‚æ•°ã€‚æ ¹æ®å½“å‰paramsç¯å¢ƒï¼Œé‡å®šå‘åˆ°ä¸åŒåœ°å€
 match '/foo', :to=>redirect("http://google.com")
-get 'docs/:article', to: redirect('/wiki/%{article}')	# ²åÖµ
+get 'docs/:article', to: redirect('/wiki/%{article}')	# æ’å€¼
 match "api/v1/:api" :to=>redirect(:status=>302){|parm| "/api/v2/#{parms[:api].pluralize}" }
 
 === :constraints ===
-¹ãÒåÉÏ£¬¿ÉÒÔÏŞ¶¨requestÖĞËùÓĞ key µÄÄÚÈİ
-* ¸ñÊ½ÎªÕıÔò±í´ïÊ½
-* ÕıÔò±í´ïÊ½²»ĞèÒª^ $µÈÃªµã¡£
+å¹¿ä¹‰ä¸Šï¼Œå¯ä»¥é™å®šrequestä¸­æ‰€æœ‰ key çš„å†…å®¹
+* æ ¼å¼ä¸ºæ­£åˆ™è¡¨è¾¾å¼
+* æ­£åˆ™è¡¨è¾¾å¼ä¸éœ€è¦^ $ç­‰é”šç‚¹ã€‚
 ''match 'photos/:id' => 'photos#show', :constraints => { :id => ''**/[A-Z]\d{5}/**'' }''
 
-===== rootÂ·ÓÉ =====
-* Õû¸öÍøÕ¾µÄ¸ùÄ¿Â¼
+===== rootè·¯ç”± =====
+* æ•´ä¸ªç½‘ç«™çš„æ ¹ç›®å½•
    root :to=>"controllers#action"'
 
 
 ===== Resources & resource =====
-* **½áºÏHTTP verbºÍÓĞÏŞµÄhelperÀàĞÍ£¬¹¹½¨ÍêÕûµÄCRUD routes¡£**
-* ¶Ô»ùÓÚÊı¾İ¿âµÄÍøÒ³Ó¦ÓÃÀ´Ëµ£¬REST·Ç³£ºÏÊÊ
+* **ç»“åˆHTTP verbå’Œæœ‰é™çš„helperç±»å‹ï¼Œæ„å»ºå®Œæ•´çš„CRUD routesã€‚**
+* å¯¹åŸºäºæ•°æ®åº“çš„ç½‘é¡µåº”ç”¨æ¥è¯´ï¼ŒRESTéå¸¸åˆé€‚
 * standardization of action names
 * bundle named routes to a specific predefined set of actions
 
 ==== http verbs ====
-* Ä¬ÈÏÊÇGET
-* form_tag, form_forÊ±£¬Ä¬ÈÏÊ¹ÓÃPOST
-* ÆäËûÇéĞÎÏÂ£¬ĞèÒªÖ¸¶¨:method²ÎÊı¡£
-* RAILS Ä£ÄâÁËPUT, DELETE¡£ÔÚPOSTµÄ»ù´¡ÉÏ£¬Ìí¼ÓÁËÃûÎª _methodµÄhidden field£¬Öµ·Ö±ğÎªput, delete
+* é»˜è®¤æ˜¯GET
+* form_tag, form_foræ—¶ï¼Œé»˜è®¤ä½¿ç”¨POST
+* å…¶ä»–æƒ…å½¢ä¸‹ï¼Œéœ€è¦æŒ‡å®š:methodå‚æ•°ã€‚
+* RAILS æ¨¡æ‹Ÿäº†PUT, DELETEã€‚åœ¨POSTçš„åŸºç¡€ä¸Šï¼Œæ·»åŠ äº†åä¸º _methodçš„hidden fieldï¼Œå€¼åˆ†åˆ«ä¸ºput, delete
 
 
 ==== resources posts====
-* ¸´ÊıĞÎÊ½µÄresources½¨Á¢7¸ö HTTP_Verb + PATH  <=> action ×éºÏ£¬**4ÖÖpath/url¡£ÔÚURLÖĞ°üº¬:id¡£** 
+* å¤æ•°å½¢å¼çš„resourceså»ºç«‹7ä¸ª HTTP_Verb + PATH  <=> action ç»„åˆï¼Œ**4ç§path/urlã€‚åœ¨URLä¸­åŒ…å«:idã€‚** 
 
 request	          URL		      Path/URL_helper		       action
 
@@ -91,7 +105,7 @@ GET 		/photos               photos_path			index
 POST 	       /photos 		      photos_path			create 
 
 GET 	       /photos/new 	      new_photo_path		        new
-¡¤
+Â·
 GET 	       /photos/:id/edit       edit_photo_path(:id)	        edit 
 
 GET 	       /photos/:id 	      photo_path(:id)		        show
@@ -101,10 +115,10 @@ PUT 	       /photos/:id 	      photo_path(:id)		       update
 DELETE 	      /photos/:id 	      photo_path(:id)		       destroy
 
 ==== Resource  geocoder ====
-ÓĞÊ±ÎÒÃÇÏ£Íû²»Ê¹ÓÃ ID ¾ÍÄÜ²éÕÒ×ÊÔ´¡£ÀıÈç£¬ÈÃ /profile ×ÜÊÇÏÔÊ¾µ±Ç°µÇÂ¼ÓÃ»§µÄ¸öÈËĞÅÏ¢¡£ÕâÖÖÇé¿öÏÂ£¬ÎÒÃÇ¿ÉÒÔÊ¹ÓÃµ¥Êı×ÊÔ´À´°Ñ /profile ¶ø²»ÊÇ /profile/:id Ó³Éäµ½ show ¶¯×÷
+æœ‰æ—¶æˆ‘ä»¬å¸Œæœ›ä¸ä½¿ç”¨ ID å°±èƒ½æŸ¥æ‰¾èµ„æºã€‚ä¾‹å¦‚ï¼Œè®© /profile æ€»æ˜¯æ˜¾ç¤ºå½“å‰ç™»å½•ç”¨æˆ·çš„ä¸ªäººä¿¡æ¯ã€‚è¿™ç§æƒ…å†µä¸‹ï¼Œæˆ‘ä»¬å¯ä»¥ä½¿ç”¨å•æ•°èµ„æºæ¥æŠŠ /profile è€Œä¸æ˜¯ /profile/:id æ˜ å°„åˆ° show åŠ¨ä½œ
 
-* µ±Î§ÈÆ×ÅÒ»¸ö¶ÔÏó£¬¿ÉÒÔ´´½¨resourceµ¥ÊıÀàĞÍ¡£
-* µ¥ÊıĞÎÊ½µÄresource½¨Á¢6¸ö request+ URL <=> action×éºÏ£¬**3ÖÖ path/url¡£URLÖĞ²»°üº¬:id**¡£
+* å½“å›´ç»•ç€ä¸€ä¸ªå¯¹è±¡ï¼Œå¯ä»¥åˆ›å»ºresourceå•æ•°ç±»å‹ã€‚
+* å•æ•°å½¢å¼çš„resourceå»ºç«‹6ä¸ª request+ URL <=> actionç»„åˆï¼Œ**3ç§ path/urlã€‚URLä¸­ä¸åŒ…å«:id**ã€‚
 
 HTTP_Verb           Path 		path/url_helper			action 
 
@@ -121,27 +135,27 @@ PUT 	       /geocoder 		geocoder_path			update
 DELETE 	       /geocoder 		geocoder_path			destroy 	
 
 
-==== Ê¹ÓÃonly, except Éú³É²¿·Öresources ====
+==== ä½¿ç”¨only, except ç”Ÿæˆéƒ¨åˆ†resources ====
 
-resources»á²úÉú7¸öpath£¬¿ÉÒÔÖ»Ñ¡È¡ÆäÖĞµÄÈô¸É¸ö¡£Ê¹ÓÃ£ºonly, »ò :except ²ÎÊı
+resourcesä¼šäº§ç”Ÿ7ä¸ªpathï¼Œå¯ä»¥åªé€‰å–å…¶ä¸­çš„è‹¥å¹²ä¸ªã€‚ä½¿ç”¨ï¼šonly, æˆ– :except å‚æ•°
 
    resources :logs, :only=>[:new,:destroy, :create]
 
 
-==== ×Ô¶¨ÒåresourceÔªËØ ====
-¿ÉÒÔ¸Ä±äcontroller, helper, path ¸÷¸ö²¿·Ö¡£
+==== è‡ªå®šä¹‰resourceå…ƒç´  ====
+å¯ä»¥æ”¹å˜controller, helper, path å„ä¸ªéƒ¨åˆ†ã€‚
 
-:controller 	Êµ¼ÊµÄcontrollerÃû³Æ
-:as			×Ô¶¨Òåcontroller¶ÔÓ¦µÄhelperÃû³ÆÇ°×º(²»°üÀ¨path,url,new,edit)¡£
+:controller 	å®é™…çš„controlleråç§°
+:as			è‡ªå®šä¹‰controllerå¯¹åº”çš„helperåç§°å‰ç¼€(ä¸åŒ…æ‹¬path,url,new,edit)ã€‚
 :path_names	change the **paths of the seven default actions**. Paths not specified are not changed. 
-:module		namespace¡£
-:path 		prefix path with ...(ÀıÈç:path => :locale)
+:module		namespaceã€‚
+:path 		prefix path with ...(ä¾‹å¦‚:path => :locale)
 
 ==== Adding extra Actions to REST ====
 
 === member ===
-memberÓÃÀ´¸øÖîÈç posts/:id ÕâÑù**ÀàµÄmember(´øidµÄ¾ßÌå¶ÔÏó)**Ìí¼ÓÒ»Ğ©route¡£
-ÀıÈç£º
+memberç”¨æ¥ç»™è¯¸å¦‚ posts/:id è¿™æ ·**ç±»çš„member(å¸¦idçš„å…·ä½“å¯¹è±¡)**æ·»åŠ ä¸€äº›routeã€‚
+ä¾‹å¦‚ï¼š
 resources :photos do
   member do
     get 'preview'
@@ -149,15 +163,15 @@ resources :photos do
 end
 
 
-»á²úÉú£º
+ä¼šäº§ç”Ÿï¼š
 	request	              path              action		 helper
 
 	GET		photo/1/preview 	preview		preview_photo_path(1)
 
 
 === collection ===
-collectionÓÃÀ´¸ø ÖîÈç /users/ ÕâÑùµÄurlÌí¼ÓÒ»Ğ©route¡£
-ÀıÈç£º
+collectionç”¨æ¥ç»™ è¯¸å¦‚ /users/ è¿™æ ·çš„urlæ·»åŠ ä¸€äº›routeã€‚
+ä¾‹å¦‚ï¼š
 '''
 resources :photos do
   collection do
@@ -166,19 +180,19 @@ resources :photos do
 end
 '''
 
-½«²úÉú£º
+å°†äº§ç”Ÿï¼š
 	request	             path       action		helper
 
 	GET		/photos/search	search		search_photos_path
 
 
 === Notes ===
-* Èç¹ûÌí¼ÓÁËÌØ¶àµÄaction£¬¾ÍĞèÒª¿¼ÂÇ½«ÕâĞ©action·Åµ½Ò»¸öµ¥¶ÀµÄÎŞmodelµÄcontrollerÀï£¬È»ºóÔÚroutesÀï½«ÆäÇ¶Ì×ÔÚÔ­controllerÀï¡£
-* ÇëÇóÔ¼Êø
+* å¦‚æœæ·»åŠ äº†ç‰¹å¤šçš„actionï¼Œå°±éœ€è¦è€ƒè™‘å°†è¿™äº›actionæ”¾åˆ°ä¸€ä¸ªå•ç‹¬çš„æ— modelçš„controlleré‡Œï¼Œç„¶ååœ¨routesé‡Œå°†å…¶åµŒå¥—åœ¨åŸcontrolleré‡Œã€‚
+* è¯·æ±‚çº¦æŸ
 get 'photos', to: 'photos#index', constraints: { subdomain: 'admin' }
 ===== Scope =====
 
-* ½«¾ßÓĞ¹²Í¬²ÎÊıµÄroute¹æÔò×éºÏÆğÀ´¡£scopeÏÂµÄroute¹æÔò¹²ÏíscopeÖĞÁĞ³öµÄ²ÎÊı
+* å°†å…·æœ‰å…±åŒå‚æ•°çš„routeè§„åˆ™ç»„åˆèµ·æ¥ã€‚scopeä¸‹çš„routeè§„åˆ™å…±äº«scopeä¸­åˆ—å‡ºçš„å‚æ•°
 
 scope :module => "admin", :path=>"/admin", :as=>"admin" do
    resources :posts
@@ -186,18 +200,18 @@ end
 
 
 ===== Namespace =====
-* ÆäÊµÊÇ ½« :path, :as, :module²ÎÊı ÉèÎªÓënamespace Í¬ÃûµÄÖµ
+* å…¶å®æ˜¯ å°† :path, :as, :moduleå‚æ•° è®¾ä¸ºä¸namespace åŒåçš„å€¼
 
-namespaceÓÃÀ´½«¶à¸öcontroller×éÖ¯ÔÚÒ»¸öÃüÃû¿Õ¼äÄÚ¡£ÀıÈç£º
+namespaceç”¨æ¥å°†å¤šä¸ªcontrollerç»„ç»‡åœ¨ä¸€ä¸ªå‘½åç©ºé—´å†…ã€‚ä¾‹å¦‚ï¼š
 	'''
 
 	namespace :admin do
 	  resources :posts, :comments
 	end
 	'''
-Õâ¶ÎºÍÉÏÃæµÄscope×÷ÓÃÏàÍ¬
+è¿™æ®µå’Œä¸Šé¢çš„scopeä½œç”¨ç›¸åŒ
 
-**ÔÚÄ¿Â¼½á¹¹ÉÏ£¬posts, comments µÄcontroller¶¼´æ·ÅÔÚadminÎÄ¼ş¼ĞÖĞ¡£**
+**åœ¨ç›®å½•ç»“æ„ä¸Šï¼Œposts, comments çš„controlleréƒ½å­˜æ”¾åœ¨adminæ–‡ä»¶å¤¹ä¸­ã€‚**
 
 HTTP Verb 	Path 				action 	named helper
 
@@ -216,26 +230,26 @@ PUT 		/admin/posts/:id 		update 	admin_post_path(:id)
 DELETE 		/admin/posts/:id 		destroy 	admin_post_path(:id) 
 
 ===== nested resource =====
-* ÄÜÔÚURLÖĞÌåÏÖ³ıËùÊô¹ØÏµ¡£
-* FIXME: ¿ÉÒÔÊ¹ÓÃnested resourceÏŞÖÆ×Ó¶ÔÏóÖ»ÄÜÔÚ¸¸¶ÔÏóµÄcontextÏÂÊ¹ÓÃ¡£²»ÄÜÖ±½Ó»ñÈ¡²é¿´¡£
-* Ç¶Ì×¾¡Á¿²»Òª³¬¹ıÒ»¼¶¡£
-* nested resource²¢²»ÊÇ¾ø¶Ô±ØÒªµÄ¡£Ö»ÊÇÌá¹©ÁËÒ»ÖÖ·½Ê½¡£
+* èƒ½åœ¨URLä¸­ä½“ç°é™¤æ‰€å±å…³ç³»ã€‚
+* FIXME: å¯ä»¥ä½¿ç”¨nested resourceé™åˆ¶å­å¯¹è±¡åªèƒ½åœ¨çˆ¶å¯¹è±¡çš„contextä¸‹ä½¿ç”¨ã€‚ä¸èƒ½ç›´æ¥è·å–æŸ¥çœ‹ã€‚
+* åµŒå¥—å°½é‡ä¸è¦è¶…è¿‡ä¸€çº§ã€‚
+* nested resourceå¹¶ä¸æ˜¯ç»å¯¹å¿…è¦çš„ã€‚åªæ˜¯æä¾›äº†ä¸€ç§æ–¹å¼ã€‚
 
 resources :magazines do
   resources :ads
 end
-¶ÔMagazineControllerÀ´Ëµ£¬routeºÍÒÔÇ°Ò»Ñù£¬¶ÔAdsControllerÀ´Ëµ£¬ÓĞ£º
+å¯¹MagazineControlleræ¥è¯´ï¼Œrouteå’Œä»¥å‰ä¸€æ ·ï¼Œå¯¹AdsControlleræ¥è¯´ï¼Œæœ‰ï¼š
 
 HTTP Verb 	Path 						action   	helper		
-GET          /magazines/:magazine_id/ads                        ads#index       magazine_ads_path                         ÏÔÊ¾Ö¸¶¨ÔÓÖ¾µÄËùÓĞ¹ã¸æµÄÁĞ±í
+GET          /magazines/:magazine_id/ads                        ads#index       magazine_ads_path                         æ˜¾ç¤ºæŒ‡å®šæ‚å¿—çš„æ‰€æœ‰å¹¿å‘Šçš„åˆ—è¡¨
 
-POST 	     /magazines/:magazine_id/ads 			ads#create      magazine_ads_path(@magzzine)              ÎªÖ¸¶¨ÔÓÖ¾ĞÂ½¨¹ã¸æ
+POST 	     /magazines/:magazine_id/ads 			ads#create      magazine_ads_path(@magzzine)              ä¸ºæŒ‡å®šæ‚å¿—æ–°å»ºå¹¿å‘Š
 
-GET 	    /magazines/:magazine_id/ads/new 	                ads#new 	new_magazine_ads_path(@magazine)          ·µ»ØÎªÖ¸¶¨ÔÓÖ¾ĞÂ½¨¹ã¸æµÄ HTML ±íµ¥
+GET 	    /magazines/:magazine_id/ads/new 	                ads#new 	new_magazine_ads_path(@magazine)          è¿”å›ä¸ºæŒ‡å®šæ‚å¿—æ–°å»ºå¹¿å‘Šçš„ HTML è¡¨å•
 
-GET 	   /magazines/:magazine_id/ads/:id/edit 	        ads#edit 	edit_magazine_ad_path(@magazine, @ad)     ·µ»ØÓÃÓÚĞŞ¸ÄÖ¸¶¨ÔÓÖ¾µÄ¹ã¸æµÄ HTML ±íµ¥
+GET 	   /magazines/:magazine_id/ads/:id/edit 	        ads#edit 	edit_magazine_ad_path(@magazine, @ad)     è¿”å›ç”¨äºä¿®æ”¹æŒ‡å®šæ‚å¿—çš„å¹¿å‘Šçš„ HTML è¡¨å•
 
-GET 	  /magazines/:magazine_id/ads/:id 		        ads#show  	magazine_ad_path(@magzzine, @ad)          ÏÔÊ¾Ö¸¶¨ÔÓÖ¾µÄÖ¸¶¨¹ã¸æ
+GET 	  /magazines/:magazine_id/ads/:id 		        ads#show  	magazine_ad_path(@magzzine, @ad)          æ˜¾ç¤ºæŒ‡å®šæ‚å¿—çš„æŒ‡å®šå¹¿å‘Š
 
 PUT 	  /magazines/:magazine_id/ads/:id 		        ads#update 	magazine_ad_path(@magzzine, @ad)
 
@@ -243,8 +257,8 @@ DELETE    /magazines/:magazine_id/ads/:id 		        ads#destroy 	magazine_ad_pat
 
 
 ===== Helpers =====
-ÔÚmodelÖĞ»ñÈ¡Ö¸¶¨url£ºRails.application.routes.url_helpers
-»òÕß£º
+åœ¨modelä¸­è·å–æŒ‡å®šurlï¼šRails.application.routes.url_helpers
+æˆ–è€…ï¼š
 delegate :url_helpers, to: 'Rails.application.routes' 
 url_helpers.users_url => 'www.foo.com/users'
 ==== url_for ====
@@ -253,18 +267,18 @@ url_helpers.users_url => 'www.foo.com/users'
  url_for :controller => 'tasks', :action => 'testing', :id=>"3"
 
 === object ===
-¸ù¾İ¶ÔÏóµÄÀàÃûÑ°ÕÒÏàÓ¦µÄroute path helper£¬²¢Éú³ÉÏàÓ¦µÄURL¡£__ÕâÑù¿ÉÒÔÔÚÈÎºÎĞèÒªURLµÄµØ·½£¬´«µİurl_for(obj) »òÕß Ö±½Ó´«µİ obj¡£__
-* Ç°ÌáÊÇroutes.rbÖĞÄÜÕÒµ½¡£
+æ ¹æ®å¯¹è±¡çš„ç±»åå¯»æ‰¾ç›¸åº”çš„route path helperï¼Œå¹¶ç”Ÿæˆç›¸åº”çš„URLã€‚__è¿™æ ·å¯ä»¥åœ¨ä»»ä½•éœ€è¦URLçš„åœ°æ–¹ï¼Œä¼ é€’url_for(obj) æˆ–è€… ç›´æ¥ä¼ é€’ objã€‚__
+* å‰ææ˜¯routes.rbä¸­èƒ½æ‰¾åˆ°ã€‚
 
-ÀıÈç¶Ôroutes:
+ä¾‹å¦‚å¯¹routes:
 	resources :magazines do
 	  resources :ads
 	end
 
 ''url_for([@magazine, @ad])''
-±íÊ¾£ºmagazine_ad_path(@magazine, @ad)£¬Òà¼´£º /magazine/3/ad/2
+è¡¨ç¤ºï¼šmagazine_ad_path(@magazine, @ad)ï¼Œäº¦å³ï¼š /magazine/3/ad/2
 
-ÀıÈçÔÚlink_toÖĞ£¬¿ÉÊ¹ÓÃµÄĞÎÊ½ÓĞ£º
+ä¾‹å¦‚åœ¨link_toä¸­ï¼Œå¯ä½¿ç”¨çš„å½¢å¼æœ‰ï¼š
 
 '''
 link_to "Ad details", url_for([@magazine, @ad])
@@ -274,23 +288,23 @@ link_to "Magazine details", @magazine
 
 ===== MIME types & Representation =====
 * you don't actually receiver resource, you retrieve representation of resources
-* ÌåÏÖÔÚroute¹æÔòÖĞµÄ  .format ²¿·Ö
-* route¸ºÔğurl <=> action¡£¶ørespond_to·½·¨¸ºÔğ´¦ÀírouteÖĞµÄ.format²¿·Ö£¬¸ù¾İformatµÄ²»Í¬£¬·µ»Ø²»Í¬µÄresponse¡£
+* ä½“ç°åœ¨routeè§„åˆ™ä¸­çš„  .format éƒ¨åˆ†
+* routeè´Ÿè´£url <=> actionã€‚è€Œrespond_toæ–¹æ³•è´Ÿè´£å¤„ç†routeä¸­çš„.formatéƒ¨åˆ†ï¼Œæ ¹æ®formatçš„ä¸åŒï¼Œè¿”å›ä¸åŒçš„responseã€‚
 
 match '/abount(.format)' => 'home#about', as: about
 match "/secret" => "info#about", :constraints => { :user_agent => /Firefox/ }
 match "/secret" => "info#about", :constraints => { :host=> /localhost/ }
-=========°ó¶¨²ÎÊı==================
+=========ç»‘å®šå‚æ•°==================
 
-ÔÚÉùÃ÷ÆÕÍ¨Â·ÓÉÊ±£¬ÎÒÃÇ¿ÉÒÔÊ¹ÓÃ·ûºÅ£¬½«Æä×÷Îª HTTP ÇëÇóµÄÒ»²¿·Ö¡£ÀıÈç£¬ÏÂÃæµÄÂ·ÓÉ£º
+åœ¨å£°æ˜æ™®é€šè·¯ç”±æ—¶ï¼Œæˆ‘ä»¬å¯ä»¥ä½¿ç”¨ç¬¦å·ï¼Œå°†å…¶ä½œä¸º HTTP è¯·æ±‚çš„ä¸€éƒ¨åˆ†ã€‚ä¾‹å¦‚ï¼Œä¸‹é¢çš„è·¯ç”±ï¼š
 get 'photos(/:id)', to: :display
 
-ÔÚ´¦Àí /photos/1 ÇëÇóÊ±£¨¼ÙÉèÕâ¸öÂ·ÓÉÊÇµÚÒ»¸öÆ¥ÅäµÄÂ·ÓÉ£©£¬»á°ÑÇëÇóÓ³Éäµ½ Photos ¿ØÖÆÆ÷µÄ display ¶¯×÷ÉÏ£¬²¢°Ñ²ÎÊı 1 ´«Èë params[:id]¡£¶ø /photos ÇëÇó£¬Ò²»á±»Õâ¸öÂ·ÓÉÓ³Éäµ½ PhotosController#display ÉÏ£¬ÒòÎª :id ÔÚÀ¨ºÅÖĞ£¬ÊÇ¿ÉÑ¡²ÎÊı¡£
+åœ¨å¤„ç† /photos/1 è¯·æ±‚æ—¶ï¼ˆå‡è®¾è¿™ä¸ªè·¯ç”±æ˜¯ç¬¬ä¸€ä¸ªåŒ¹é…çš„è·¯ç”±ï¼‰ï¼Œä¼šæŠŠè¯·æ±‚æ˜ å°„åˆ° Photos æ§åˆ¶å™¨çš„ display åŠ¨ä½œä¸Šï¼Œå¹¶æŠŠå‚æ•° 1 ä¼ å…¥ params[:id]ã€‚è€Œ /photos è¯·æ±‚ï¼Œä¹Ÿä¼šè¢«è¿™ä¸ªè·¯ç”±æ˜ å°„åˆ° PhotosController#display ä¸Šï¼Œå› ä¸º :id åœ¨æ‹¬å·ä¸­ï¼Œæ˜¯å¯é€‰å‚æ•°ã€‚
   constraints :host => /localhost/ do
     match "/secret" => "info#about"
   end
 
-/about.pdf    /abolout ¶¼¿ÉÒÔÅäµ½
+/about.pdf    /abolout éƒ½å¯ä»¥é…åˆ°
 
 ==== respond_to ====
 
@@ -303,11 +317,11 @@ respond_to do |format|
 	format.js
 	end
 	'''
-* Èç¹ûÒ»¸öformatÃ»ÓĞblock£¬ÄÇÃ´»áÑ°ÕÒ¶ÔÓ¦À©Õ¹ÃûµÄview template
-* Èç¹ûÓĞblock£¬ÀïÃæÓ¦¸Ã»áÓĞrender, redirect_to¡£
-* render ÓĞÁ½¸ö²ÎÊı£º:xml, :json£¬Ò²ÓĞÄÚÖÃµÄ·½·¨to_xml, to_json
+* å¦‚æœä¸€ä¸ªformatæ²¡æœ‰blockï¼Œé‚£ä¹ˆä¼šå¯»æ‰¾å¯¹åº”æ‰©å±•åçš„view template
+* å¦‚æœæœ‰blockï¼Œé‡Œé¢åº”è¯¥ä¼šæœ‰render, redirect_toã€‚
+* render æœ‰ä¸¤ä¸ªå‚æ•°ï¼š:xml, :jsonï¼Œä¹Ÿæœ‰å†…ç½®çš„æ–¹æ³•to_xml, to_json
 
-**Î´×¢²á¸ñÊ½**
+**æœªæ³¨å†Œæ ¼å¼**
 Respond to also allows you to specify a common block for different formats by using __any__:
 	'''
 	respond_to do |format|
@@ -318,7 +332,7 @@ Respond to also allows you to specify a common block for different formats by us
 ''  end''
 
 ==== named route+ format ====
-ÔÚlink_toµÈ·½·¨ÖĞ£¬Ê¹ÓÃnamed route²¢Ö¸¶¨representationÀà±ğ£¬ĞèÒªÊ¹ÓÃ:format²ÎÊı£º
+åœ¨link_toç­‰æ–¹æ³•ä¸­ï¼Œä½¿ç”¨named routeå¹¶æŒ‡å®šrepresentationç±»åˆ«ï¼Œéœ€è¦ä½¿ç”¨:formatå‚æ•°ï¼š
 
 	''auctions_path(:format=>:xml)''
 	''auction_path(@auction, :format=>:xml)''
