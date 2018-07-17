@@ -1,43 +1,43 @@
-1:×Ô¶¯¼ÓÔØºÍÖØÐÂ¼ÓÔØ³£Á¿ÖÐÖ÷ÒªÄÚÈÝ£º
-    Kernel#require ¼ÓÔØÒ»´Î #ËùÒÔÔÚÉú²ú»·¾³ÏÂ Èç¹û²»ÖØÐÂÆô¶¯·þÎñ£¬ÐÞ¸ÄÄÚÈÝ²»ÉúÐ§
-    kernel#load    ¼ÓÔØ¶à´Î #ËùÒÔÔÚ¿ª·¢»·¾³ÏÂ ¸ü¸ÄºóÎÞÐèÖØÐÂÆô¶¯·þÎñ¼´¿ÉÉúÐ§£¬¿ª·¢»·¾³ÏÂ¸üÎªÓÑºÃ
-    autoload_paths Ä¬ÈÏ°üº¬£º
+1:è‡ªåŠ¨åŠ è½½å’Œé‡æ–°åŠ è½½å¸¸é‡ä¸­ä¸»è¦å†…å®¹ï¼š
+    Kernel#require åŠ è½½ä¸€æ¬¡ #æ‰€ä»¥åœ¨ç”Ÿäº§çŽ¯å¢ƒä¸‹ å¦‚æžœä¸é‡æ–°å¯åŠ¨æœåŠ¡ï¼Œä¿®æ”¹å†…å®¹ä¸ç”Ÿæ•ˆ
+    kernel#load    åŠ è½½å¤šæ¬¡ #æ‰€ä»¥åœ¨å¼€å‘çŽ¯å¢ƒä¸‹ æ›´æ”¹åŽæ— éœ€é‡æ–°å¯åŠ¨æœåŠ¡å³å¯ç”Ÿæ•ˆï¼Œå¼€å‘çŽ¯å¢ƒä¸‹æ›´ä¸ºå‹å¥½
+    autoload_paths é»˜è®¤åŒ…å«ï¼š
 
-    A£º app Ä¿Â¼ÖÐµÄÈ«²¿×ÓÄ¿Â¼¶¼×Ô¶¯ÄÉÈë autoload_paths
-    B£º Ó¦ÓÃºÍÒýÇæÖÐÃûÎª app/*/concerns µÄ¶þ¼¶Ä¿Â¼¡£
-    C£º test/mailers/previews Ä¿Â¼¡£
-    ´ËÍâ£¬¿ÉÒÔÔÚapplication.rbÖÐÅäÖÃautoload_pathsÄ¿Â¼£¬ÔÚ¸÷¸ö»·¾³µÄÅäÖÃÎÄ¼þÖÐ²»ÄÜÅäÖÃ config.autoload_paths
-    autoload_paths ÔÚ³õÊ¼»¯¹ý³ÌÖÐ¼ÆËã²¢»º´æ
-    ×Ô¶¯¼ÓÔØ²»ÒªÇó±ØÐëÊÇÀà»òÕßÄ£¿é£¬Ò²¿ÉÒÔÊÇÆÕÍ¨³£Á¿
- 2£º ³£Á¿µÄÖØÐÂ¼ÓÔØ reload! »á¼ì²âÒÔÏÂÒ»¸öÎÄ¼þ±ä»¯
+    Aï¼š app ç›®å½•ä¸­çš„å…¨éƒ¨å­ç›®å½•éƒ½è‡ªåŠ¨çº³å…¥ autoload_paths
+    Bï¼š åº”ç”¨å’Œå¼•æ“Žä¸­åä¸º app/*/concerns çš„äºŒçº§ç›®å½•ã€‚
+    Cï¼š test/mailers/previews ç›®å½•ã€‚
+    æ­¤å¤–ï¼Œå¯ä»¥åœ¨application.rbä¸­é…ç½®autoload_pathsç›®å½•ï¼Œåœ¨å„ä¸ªçŽ¯å¢ƒçš„é…ç½®æ–‡ä»¶ä¸­ä¸èƒ½é…ç½® config.autoload_paths
+    autoload_paths åœ¨åˆå§‹åŒ–è¿‡ç¨‹ä¸­è®¡ç®—å¹¶ç¼“å­˜
+    è‡ªåŠ¨åŠ è½½ä¸è¦æ±‚å¿…é¡»æ˜¯ç±»æˆ–è€…æ¨¡å—ï¼Œä¹Ÿå¯ä»¥æ˜¯æ™®é€šå¸¸é‡
+ 2ï¼š å¸¸é‡çš„é‡æ–°åŠ è½½ reload! ä¼šæ£€æµ‹ä»¥ä¸‹ä¸€ä¸ªæ–‡ä»¶å˜åŒ–
       config/routes.rb
 
       Locales
 
-      autoload_paths ÖÐµÄ Ruby ÎÄ¼þ
+      autoload_paths ä¸­çš„ Ruby æ–‡ä»¶
 
-      db/schema.rb ºÍ db/structure.sql
-      Èç¹ûÕâÐ©ÎÄ¼þÖÐµÄÄÚÈÝÓÐ±ä£¬ÓÐ¸öÖÐ¼ä¼þ»á·¢ÏÖ£¬È»ºóÖØÐÂ¼ÓÔØ´úÂë¡£
-  3£ºrequire_dependency
-     µ¥±í¼Ì³Ð£¨Single Table Inheritance£¬STI£©ÊÇ Active Record µÄÒ»¸ö¹¦ÄÜ
-     ×÷ÓÃÊÇÔÚÒ»¸öÊý¾Ý±íÖÐÌí¼Ó¾ßÓÐ²ã´Î½á¹¹µÄ¶à¸öÄ£ÐÍ¡£
-     require_dependency: ÓÐÊ±Ö´ÐÐµ½Ä³²¿·Ö´úÂëÊ±ÏëÈ·±£ÌØ¶¨³£Á¿ÊÇÒÑÖªµÄ,³£ÓÃÓÚ½â¾ösingle tale InheritanceÊÖ¶¯¼ÓÔØ×ÓÀà
-  4£º A£ºÔÚÔËÐÐÊ±´¦ÀíÒ³ÃæäÖÈ¾£¬¿ÉÒÔÊ¹ÓÃÒ»¸ö·ûºÅ°Ñ²¼¾ÖÑÓºóµ½´¦ÀíÇëÇóÊ±ÔÙÑ¡Ôñ
+      db/schema.rb å’Œ db/structure.sql
+      å¦‚æžœè¿™äº›æ–‡ä»¶ä¸­çš„å†…å®¹æœ‰å˜ï¼Œæœ‰ä¸ªä¸­é—´ä»¶ä¼šå‘çŽ°ï¼Œç„¶åŽé‡æ–°åŠ è½½ä»£ç ã€‚
+  3ï¼šrequire_dependency
+     å•è¡¨ç»§æ‰¿ï¼ˆSingle Table Inheritanceï¼ŒSTIï¼‰æ˜¯ Active Record çš„ä¸€ä¸ªåŠŸèƒ½
+     ä½œç”¨æ˜¯åœ¨ä¸€ä¸ªæ•°æ®è¡¨ä¸­æ·»åŠ å…·æœ‰å±‚æ¬¡ç»“æž„çš„å¤šä¸ªæ¨¡åž‹ã€‚
+     require_dependency: æœ‰æ—¶æ‰§è¡Œåˆ°æŸéƒ¨åˆ†ä»£ç æ—¶æƒ³ç¡®ä¿ç‰¹å®šå¸¸é‡æ˜¯å·²çŸ¥çš„,å¸¸ç”¨äºŽè§£å†³single tale Inheritanceæ‰‹åŠ¨åŠ è½½å­ç±»
+  4ï¼š Aï¼šåœ¨è¿è¡Œæ—¶å¤„ç†é¡µé¢æ¸²æŸ“ï¼Œå¯ä»¥ä½¿ç”¨ä¸€ä¸ªç¬¦å·æŠŠå¸ƒå±€å»¶åŽåˆ°å¤„ç†è¯·æ±‚æ—¶å†é€‰æ‹©
       layout :layout_choose
       private
         def layout_choose
           @current_user.special? ? "special" : "products"
         end
-      »¹¿ÉÒÔÊ¹ÓÃÐÐ¼ä·½·¨£¬Èç¹ûÊ¹ÓÃ ProcÆä´úÂë¿é¿ÉÒÔ·ÃÎÊ controller ÊµÀý
+      è¿˜å¯ä»¥ä½¿ç”¨è¡Œé—´æ–¹æ³•ï¼Œå¦‚æžœä½¿ç”¨ Procå…¶ä»£ç å—å¯ä»¥è®¿é—® controller å®žä¾‹
       class ProductsController < ApplicationController
-        # controllerÖ¸µÄÊÇControllerµÄÊ¾Àý
+        # controlleræŒ‡çš„æ˜¯Controllerçš„ç¤ºä¾‹
         layout Proc.new { |controller| controller.request.xhr? ? "popup" : "application" }
       end
-      B£º¸ù¾ÝÌõ¼þÉè¶¨²¼¾Ö
+      Bï¼šæ ¹æ®æ¡ä»¶è®¾å®šå¸ƒå±€
        layout "product", except: [:index, :rss]
-     C:²¼¾ÖµÄ¼Ì³Ð£º ×¨ÓÃ²¼¾Ö±ÈÍ¨ÓÃ²¼¾ÖÓÅÏÈ¼¶¸ß
-  5£º Can only render or redirect once per action£¨Ò»¸ö¶¯×÷Ö»ÄÜäÖÈ¾»òÖØ¶¨ÏòÒ»´Î£©
-      ½â¾ö·½·¨ ÔÚÐèÒªÖÕÖ¹äÖÈ¾ºó Ìí¼Óand return
+     C:å¸ƒå±€çš„ç»§æ‰¿ï¼š ä¸“ç”¨å¸ƒå±€æ¯”é€šç”¨å¸ƒå±€ä¼˜å…ˆçº§é«˜
+  5ï¼š Can only render or redirect once per actionï¼ˆä¸€ä¸ªåŠ¨ä½œåªèƒ½æ¸²æŸ“æˆ–é‡å®šå‘ä¸€æ¬¡ï¼‰
+      è§£å†³æ–¹æ³• åœ¨éœ€è¦ç»ˆæ­¢æ¸²æŸ“åŽ æ·»åŠ and return
       def show
         @book = Book.find(params[:id])
         if @book.special?
@@ -45,36 +45,36 @@
         end
         render action: "regular_show"
       end
-      ´íÎóÔ­Òò£º Èç¹û½øÈëifÌõ¼þÄÚrender special_show,´ËÊ±show·½·¨Ã»ÓÐÍ£Ö¹ÔËÐÐ£¬¼ÌÐøÏòÏÂÖ´ÐÐäÖÈ¾regular_show
-  6: redirect_to ºÍ render
-     redirect_to  ²»»áÁ¢¼´µ¼ÖÂ·½·¨·µ»Ø£¬Í£Ö¹Ö´ÐÐ,ËüÃÇÖ»ÊÇÉè¶¨ HTTP ÏìÓ¦¡£
-     ·½·¨ÖÐÎ»ÓÚÆäºóµÄÓï¾ä»á¼ÌÐøÖ´ÐÐ¡£Èç¹ûÐèÒªÍ£Ö¹Ö´ÐÐ£¬Ê¹ÓÃ return Óï¾äÖÕÖ¹»úÖÆ¡£
-     render :action ²»»áÖ´ÐÐÄ¿±ê¶¯×÷ÖÐ´úÂë£¬Ö»ÊÇäÖÈ¾Ä¿±êÖÐµÄÒ³Ãæ
-  7£º ²¼¾ÖÎÊÌâ
-      ÒýÈë app/assets/javascripts/main.js ºÍ app/assets/javascripts/photos/columns.js µÄ·½Ê½ÈçÏÂ£º
+      é”™è¯¯åŽŸå› ï¼š å¦‚æžœè¿›å…¥ifæ¡ä»¶å†…render special_show,æ­¤æ—¶showæ–¹æ³•æ²¡æœ‰åœæ­¢è¿è¡Œï¼Œç»§ç»­å‘ä¸‹æ‰§è¡Œæ¸²æŸ“regular_show
+  6: redirect_to å’Œ render
+     redirect_to  ä¸ä¼šç«‹å³å¯¼è‡´æ–¹æ³•è¿”å›žï¼Œåœæ­¢æ‰§è¡Œ,å®ƒä»¬åªæ˜¯è®¾å®š HTTP å“åº”ã€‚
+     æ–¹æ³•ä¸­ä½äºŽå…¶åŽçš„è¯­å¥ä¼šç»§ç»­æ‰§è¡Œã€‚å¦‚æžœéœ€è¦åœæ­¢æ‰§è¡Œï¼Œä½¿ç”¨ return è¯­å¥ç»ˆæ­¢æœºåˆ¶ã€‚
+     render :action ä¸ä¼šæ‰§è¡Œç›®æ ‡åŠ¨ä½œä¸­ä»£ç ï¼Œåªæ˜¯æ¸²æŸ“ç›®æ ‡ä¸­çš„é¡µé¢
+  7ï¼š å¸ƒå±€é—®é¢˜
+      å¼•å…¥ app/assets/javascripts/main.js å’Œ app/assets/javascripts/photos/columns.js çš„æ–¹å¼å¦‚ä¸‹ï¼š
 
       <%= javascript_include_tag "main", "/photos/columns" %>
-      ÔÚ²¼¾ÖÖÐ£¬yield ±êÃ÷Ò»¸öÇøÓò£¬äÖÈ¾µÄÊÓÍ¼»á²åÈëÕâÀï,Ö»ÓÐÒ»¸ö yield£¬äÖÈ¾µÄÕû¸öÊÓÍ¼¶¼»á²åÈëÕâ¸öÇøÓò£º
-      ²¼¾ÖÖÐ¿ÉÒÔ±êÃ÷¶à¸öÇøÓò
+      åœ¨å¸ƒå±€ä¸­ï¼Œyield æ ‡æ˜Žä¸€ä¸ªåŒºåŸŸï¼Œæ¸²æŸ“çš„è§†å›¾ä¼šæ’å…¥è¿™é‡Œ,åªæœ‰ä¸€ä¸ª yieldï¼Œæ¸²æŸ“çš„æ•´ä¸ªè§†å›¾éƒ½ä¼šæ’å…¥è¿™ä¸ªåŒºåŸŸï¼š
+      å¸ƒå±€ä¸­å¯ä»¥æ ‡æ˜Žå¤šä¸ªåŒºåŸŸ
       <%= yield :head %> <%= yield%>
-      ÊÓÍ¼µÄÖ÷Ìå»á²åÈëÎ´ÃüÃûµÄ yield ÇøÓò
-      cotent_forÊÔÍ¼Ö÷Ìå²åÈëµ½yield :head
+      è§†å›¾çš„ä¸»ä½“ä¼šæ’å…¥æœªå‘½åçš„ yield åŒºåŸŸ
+      cotent_forè¯•å›¾ä¸»ä½“æ’å…¥åˆ°yield :head
       <% content_for :head do %>
         <title>A simple page</title>
       <% end %>
-      Èç¹û²¼¾ÖÖÐ²»Í¬µÄÇøÓòÐèÒª²»Í¬µÄÄÚÈÝ£¬ÀýÈç²à±ßÀ¸ºÍÒ³½Å£¬¾Í¿ÉÒÔÊ¹ÓÃ content_for ·½·¨¡£
-      content_for ·½·¨»¹¿ÉÒÔÔÚÍ¨ÓÃ²¼¾ÖÖÐÒýÈëÌØ¶¨Ò³ÃæÊ¹ÓÃµÄ JavaScript »ò CSS ÎÄ¼þ
+      å¦‚æžœå¸ƒå±€ä¸­ä¸åŒçš„åŒºåŸŸéœ€è¦ä¸åŒçš„å†…å®¹ï¼Œä¾‹å¦‚ä¾§è¾¹æ å’Œé¡µè„šï¼Œå°±å¯ä»¥ä½¿ç”¨ content_for æ–¹æ³•ã€‚
+      content_for æ–¹æ³•è¿˜å¯ä»¥åœ¨é€šç”¨å¸ƒå±€ä¸­å¼•å…¥ç‰¹å®šé¡µé¢ä½¿ç”¨çš„ JavaScript æˆ– CSS æ–‡ä»¶
       <div id="content"><%= content_for?(:content) ? yield(:content) : yield %></div>
-   8: ssl°²È«
-      »ùÓÚ°²È«¿¼ÂÇ£¬¿ÉÄÜÏ£ÍûÄ³¸ö¿ØÖÆÆ÷Ö»ÄÜÍ¨¹ý HTTPS Ð­Òé·ÃÎÊ
+   8: sslå®‰å…¨
+      åŸºäºŽå®‰å…¨è€ƒè™‘ï¼Œå¯èƒ½å¸Œæœ›æŸä¸ªæŽ§åˆ¶å™¨åªèƒ½é€šè¿‡ HTTPS åè®®è®¿é—®
       class DinnerController
         force_ssl
       end
-     »òÐíÄãÏëÈÃÕû¸öÓ¦ÓÃ¶¼Ê¹ÓÃ HTTPS¡£´ËÊ±£¬Äã¿ÉÒÔÔÚ»·¾³ÅäÖÃÎÄ¼þÖÐÉè¶¨ config.force_ssl Ñ¡Ïî¡£
-   9:Ê¹ÓÃÇ°Ì×Ä£°æ
-      <!--Èç¹û content_for :content do Ôò¼ÓÔØÀïÃæÄÚÈÝ·ñÔòÏÔÊ¾ÎªÃüÃûµÄÄÚÈÝ-->
+     æˆ–è®¸ä½ æƒ³è®©æ•´ä¸ªåº”ç”¨éƒ½ä½¿ç”¨ HTTPSã€‚æ­¤æ—¶ï¼Œä½ å¯ä»¥åœ¨çŽ¯å¢ƒé…ç½®æ–‡ä»¶ä¸­è®¾å®š config.force_ssl é€‰é¡¹ã€‚
+   9:ä½¿ç”¨å‰å¥—æ¨¡ç‰ˆ
+      <!--å¦‚æžœ content_for :content do åˆ™åŠ è½½é‡Œé¢å†…å®¹å¦åˆ™æ˜¾ç¤ºä¸ºå‘½åçš„å†…å®¹-->
       <div id="content"><%= content_for?(:content) ? yield(:content) : yield %></div>
-      Àý×ÓÄÚÈÝ£º application.html.reb
+      ä¾‹å­å†…å®¹ï¼š application.html.reb
           <html>
           <head>
             <title><%= @page_title or "Page Title" %></title>
@@ -97,14 +97,15 @@
           <div id="right_menu">Right menu items here</div>
         <% end %>
         <%= render template: "layouts/application" %>
-   10: ¹ýÂËµôµÄ²ÎÊýÏÔÊ¾:[FILTERED],³£ÓÃÓÚRailsÔÚlogÄÚÈÝÏßÉÏÓ¦ÓÃ²¢²»ÓÃ°ÑËùÓÐÐÅÏ¢¶¼Ð´ÈëÈÕÖ¾
+   10: è¿‡æ»¤æŽ‰çš„å‚æ•°æ˜¾ç¤º:[FILTERED],å¸¸ç”¨äºŽRailsåœ¨logå†…å®¹çº¿ä¸Šåº”ç”¨å¹¶ä¸ç”¨æŠŠæ‰€æœ‰ä¿¡æ¯éƒ½å†™å…¥æ—¥å¿—
     Rails.application.config.filter_parameters += [:password]
-   11£º  html5
-           name=viewport ÒÆ¶¯¶Ë
-           width=device-width,ÒÆ¶¯¶ËÒ³ÃæµÄ¿í¶ÈµÈÓÚÉè±¸µÄ¿í¶È
-           initial-scale=1.0 Ò³Ãæ½«ÊÇÔ­±¾³ß´çÕ¹Ê¾
-             Èç¹ûºóÃæÊÇ2.0µÄ»°£¬¾ÍÊÇÊÇ½«Ò³Ãæ·Å´óÁ½±¶
+   11ï¼š  html5
+           name=viewport ç§»åŠ¨ç«¯
+           width=device-width,ç§»åŠ¨ç«¯é¡µé¢çš„å®½åº¦ç­‰äºŽè®¾å¤‡çš„å®½åº¦
+           initial-scale=1.0 é¡µé¢å°†æ˜¯åŽŸæœ¬å°ºå¯¸å±•ç¤º
+             å¦‚æžœåŽé¢æ˜¯2.0çš„è¯ï¼Œå°±æ˜¯æ˜¯å°†é¡µé¢æ”¾å¤§ä¸¤å€
          <meta name="viewport" content="width=device-width, initial-scale=1">
-   12: ×Ö·û´®¶ÔÏóÊµÌå»¯
+   12: å­—ç¬¦ä¸²å¯¹è±¡å®žä½“åŒ–
        ActiveSupport::Dependencies.constantize("Admin::UsersCOntroller")
-       Æ½³£Ê¹ÓÃ¿ÉÒÔÖ±½ÓÊ¹ÓÃ"Admin::UsersController".constantize
+       å¹³å¸¸ä½¿ç”¨å¯ä»¥ç›´æŽ¥ä½¿ç”¨"Admin::UsersController".constantize
+  13: "1,2,3".split(" ") => ["1,2,3"]     
