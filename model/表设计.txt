@@ -1,0 +1,8 @@
+STI
+ 在数据库中添加一列type 
+如果不再数据库中添加一列type可使用
+ class Log::ProductLog < Log
+
+  default_scope {where(role: Log.roles[:Product])}
+end
+default_scope 中筛选出对应的子类
