@@ -1,0 +1,22 @@
+ 2037  brew cask install docker
+ 2055  docker -version
+ 2056  docker --version
+ 2057  docker info
+ 2059  docker pull postgres
+ 2060  docker pull phusion/passenger-ruby22
+ 2061  docker run --name 2ccmPostgres -d postgres\n
+ 2715  docker
+ 2716  docker login
+ 2718  docker build . -t maying/partner-api
+ 2719  docker images
+ 2720  docker run -p 8000:3000 15babbdae34e
+ 2721* docker contailer ls
+ 2722* docker container ls
+ 2723  docker build . -t maying/partner-api
+ 2724  docker images
+ 2725  docker rmi -f 15babbdae34e
+ 2726  docker images
+ 2727  docker run -p 8000:3000 5b8a5e80cd99
+ 2728* docker container ls
+ 2729* docker exec -it 5b8a5e80cd99 /bin/sh
+ 2730* docker exec -it 46671e7af1ec /bin/sh
