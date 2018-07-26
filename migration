@@ -1,2 +1,11 @@
 migration 
   references 会创建table_id 同时创建index
+  
+  
+  使用id: false 替代默认生成的主键
+  create_table :products, id: false do |t|
+  t.primary_key :sku
+
+  t.timestamps
+end
+
