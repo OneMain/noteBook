@@ -31,3 +31,8 @@ after_save :change_settle_status, if: -> { status_changed? }
 注意到Model资料一旦储存进数据库，追踪记录就重算消失了。
 
 什么时候会用到这个功能呢？通常是在储存进数据库前的回呼、验证或Observer中，你想根据修改了什么来做些动作，这时候Dirty Objects功能就派上用场了。
+
+实际项目中往往会追踪某个状态并作记录，
+  after_commit :save_refund_trail if: previous_changes.key?(:refund_status)
+  previous_changes： 此次记录更改的信息
+  {"updated_at"=>[Tue, 10 Jul 2018 14:36:35 CST +08:00, Thu, 26 Jul 2018 13:57:05 CST +08:00], "is_limit_purchase"=>[false, true]}
