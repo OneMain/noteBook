@@ -53,7 +53,9 @@ filter range  范围查询
                "first_name":  "John",
                "last_name":   "Smith",
                "age":         25,
-               "about":       "I love to go rock climbing",
+               "about":       "I love to go rock climbing"
+               
+               ,
                "interests": [ "sports", "music" ]
             }
          },
@@ -99,3 +101,15 @@ GET /megacorp/employee/_search
         }
     }
 }
+
+elasticsearch : version 6.x
+在配置分词器时，version5.x 中
+1: no handler for type [string] declared on field [standard]
+    原因：>6 版本，使用text 和keyword代替了 sting
+            index： 接收boolean
+        5.x
+            type： 'string'， index: 'analyzsis', analyzer： ‘pinyin_analyzer’
+        6.x
+            “type”: 'text'  ,“index”: true/false
+            "type": "keyword", "index": false}  不实用分词器
+
