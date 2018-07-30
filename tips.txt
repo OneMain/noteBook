@@ -112,3 +112,4 @@
   14: rails c 和rails g 无反应，rails s 可以
         解决方法：spring stop 后再运行 rails g 或者 rails c 都可以了，这是什么原理?
                 bundle update 之后 spring 版本变化了，和正在运行的 spring 实例不兼容
+  15: rvm gemset rename current_gemset_name new_gemset_name 更改gemset名称             
