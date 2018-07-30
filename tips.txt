@@ -112,4 +112,28 @@
   14: rails c 和rails g 无反应，rails s 可以
         解决方法：spring stop 后再运行 rails g 或者 rails c 都可以了，这是什么原理?
                 bundle update 之后 spring 版本变化了，和正在运行的 spring 实例不兼容
-  15: rvm gemset rename current_gemset_name new_gemset_name 更改gemset名称             
+  15: rvm gemset rename current_gemset_name new_gemset_name 更改gemset名称   
+  16: enum使用
+    在 model 中，或者 concerns 中加入这个方法
+
+        def self.es(*keys)
+            @es ||= defined_enums.inject({}) { |es, (_, h)| es.merge! h }
+            keys.size > 1 ? keys.map { |k| @es[k.to_s] } : @es[keys.pop.to_s]
+        end
+    如果有这样一个 model
+
+    class Conversation < ActiveRecord::Base
+        enum status: { active: 0, waiting: 1, archived: 2 }
+        enum roles: { admin: 0, editor: 1, guest: 2 }
+        # ...
+    end
+
+    # 可以这样使用
+    Conversation.es( :active, :waiting )  # => [ 0, 1 ]
+    Conversation.es( :admin )      # => 0
+    Conversation.where status: Conversation.es( :active, :waiting ), roles: Conversation.es( :admin )
+    我这样做的原因
+    
+    可以传入多个量返回一个数组，以便于构建 Hash 的查询条件，我不太喜欢 <> 这样写查询
+    我需要的只是 字面量 -> 整型 的翻译，并不关心它具体属于哪一个 enum
+    enum 的字面量不能重复，所以不会有互相污染的问题
