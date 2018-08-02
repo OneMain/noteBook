@@ -1,0 +1,4 @@
+1: How to extract all attributes with Rails Jbuilder?
+    json.merge! @trade_order.attributes     
+
+    
