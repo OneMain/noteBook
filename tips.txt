@@ -137,3 +137,6 @@
     可以传入多个量返回一个数组，以便于构建 Hash 的查询条件，我不太喜欢 <> 这样写查询
     我需要的只是 字面量 -> 整型 的翻译，并不关心它具体属于哪一个 enum
     enum 的字面量不能重复，所以不会有互相污染的问题
+    
+    User.defined_enums,获取这个类中定义的枚举值
+  17: ActiveRecord::Base.connection.tables，获取database中表
