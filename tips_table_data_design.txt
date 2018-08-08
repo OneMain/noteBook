@@ -1,0 +1,66 @@
+像存入log日志一样，剋存成array ，每个数据hash
+
+# 售后记录
+class CustomerServiceTrail < ApplicationRecord
+
+	belongs_to :partner_order_item
+  serialize :operate, Array
+
+
+  class << self
+
+	  def format_refund_in_request customer_service, reason
+	  	[{title: "售后服务", message: customer_service},
+	  	 {title: "问题描述", message: reason}]
+	  end	
+
+	  def format_wait_return_send return_shipping_code
+	  	[{title: "物流单号",message:return_shipping_code}]
+	  end
+
+	  def format_transfer_account_completed amount
+	  	[{title: "售后状态", message: "已退款"},
+	  	 {title: '退款金额', message: amount}]
+	  end	
+
+  end 
+
+end	
+
+
+输出结果：
+      "customer_service_trails": [
+        {
+            "event": "refund_in_request",
+            "created_at": "2018-03-27T14:13:50.107+08:00",
+            "operate": [
+                {
+                    "title": "售后服务",
+                    "message": "短裤不想要了"
+                },
+                {
+                    "title": "问题描述",
+                    "message": "商品质量问题"
+                }
+            ]
+        },
+        {
+            "event": "refund_completed",
+            "created_at": "2018-03-27T14:17:15.518+08:00",
+            "operate": []
+        },
+        {
+            "event": "transfer_account_completed",
+            "created_at": "2018-03-27T14:17:15.518+08:00",
+            "operate": [
+                {
+                    "title": "售后状态",
+                    "message": "已退款"
+                },
+                {
+                    "title": "退款金额",
+                    "message": 161753
+                }
+            ]
+        }
+    ]
