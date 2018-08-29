@@ -21,5 +21,6 @@ resque是多进程的，sidekiq是多线程的，相对于resque来说，sidekiq
 Resque.inline = true
 需要测试Resque的任务，但是不想跑worker（队列里面好多垃圾任务）
 Resque.inline = true
-    
+根据项目生成文档gem
+grape 写api 使用grape-swagger生成文档
   
