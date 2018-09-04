@@ -1,4 +1,11 @@
 1: How to extract all attributes with Rails Jbuilder?
     json.merge! @trade_order.attributes     
-
+2: how to cache page according to condition
+    json.cache_if!  @from == "database", "product_euro_#{@cache_key}" expires_in: 2.hours do
+	    if @is_euro_visit
+		    json.partial! 'api/v1/shared/euro_products_block', products: @products
+	    else
+		    json.partial! 'api/v1/shared/products_block', products: @products
+	    end
+    end
     
