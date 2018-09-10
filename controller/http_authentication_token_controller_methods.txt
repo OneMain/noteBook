@@ -1,0 +1,36 @@
+include ActionController::HttpAuthentication::Token::ControllerMethods
+before_action :authenticate_user_from_token!
+before_action :authenticate_user!
+
+
+def authenticate_user_from_token!
+		authenticate_or_request_with_http_token do |token, options|
+			verify_and_authenticate_user token
+		end
+	end
+
+	def verify_and_authenticate_user token
+		begin
+  		token_hash = JWT.decode(token, Rails.application.secrets.secret_key_base)
+  		auth_token = token_hash[0]["auth_token"]
+			#TODO
+			# current_user_last_update_at = $redis.get("current_user:#{auth_token}:last_update_at")
+			# cache_key = "current_user:auth_token:#{auth_token}:#{current_user_last_update_at}"
+			# user = Rails.cache.fetch(cache_key, expires_in: 3.days) do
+			# 	User.find_by_auth_token auth_token
+	    # end
+			user = User.find_by_auth_token auth_token
+			return false unless user.present?
+			return false unless Devise.secure_compare(user.auth_token, auth_token)
+			@current_user = user
+			sign_in(:user, @current_user, store: false)
+			if $redis.get("user:#{@current_user.id}:login_today").blank?
+				second = Time.now.end_of_day.to_i - Time.now.to_i
+				$redis.set("user:#{@current_user.id}:login_today", true, ex: second.seconds)
+				@current_user.update(last_sign_in_at: Time.now)
+			end
+			return true
+		rescue
+  		false
+		end
+	end
