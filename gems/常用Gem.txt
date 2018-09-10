@@ -23,4 +23,7 @@ Resque.inline = true
 Resque.inline = true
 根据项目生成文档gem
 grape 写api 使用grape-swagger生成文档
+删除任务
+Resque.remove_delayed_selection{ |args| args[0]['job_class'] == 'TradeSendStatusCheckJob' && args[0]['arguments'][0] == trade_order.id }
+
   
