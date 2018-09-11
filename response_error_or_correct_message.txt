@@ -1,0 +1,42 @@
+api接口调用中，可通过http code 和接口返回的信息定位程序具体出错信息
+module Messages
+  extend ActiveSupport::Concern
+
+  def correct_message code, hash = {}
+    correct_hash = correct_message_list.select{|message| message[:correct_code] == code}.sample
+    correct_hash = hash.blank? ? correct_hash : correct_hash.merge!(hash)
+    return correct_hash
+  end
+
+  def error_message error_code, message = nil
+    error_hash = error_message_list.select{|message| message[:error_code] == error_code}.sample
+    error_hash = error_hash.present? ? error_hash : {error_code: error_code, error_message: '操作失败，请稍后再试', message: 'Operate Failed, Try Again'}
+    error_hash[:message] += " #{message}" if message.present?
+    error_hash[:error_message] += " #{message}" if message.present?
+    return error_hash
+  end
+
+  private
+
+  def error_message_list
+    [
+      #========================APP========================
+      {error_code: 1001, error_message: '版本号不存在', message: 'Could not find the requested APP version'},
+
+      {error_code: 1101, error_message: '未能找到该文章', message: 'Could not find the article Not Found'}
+    ]
+  end
+  
+    def correct_message_list
+      [
+        #========================APP========================
+        {correct_code: 'C0000', correct_message: 'Request Success', message: 'Request Success'},
+
+        {correct_code: 'C1101', correct_message: 'Add Comment Success', message: 'Add Comment Success'}
+      ]
+    end
+    
+ end
+ 
+ 这样可以很好的定位到错误信息，同时建议，每个controller预留出100个错误编码比如
+ Usercontroller 中 1001 - 10100，这样后续可以很清楚知道是哪个controller出现错误。
