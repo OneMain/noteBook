@@ -1,0 +1,62 @@
+针对api接口调用，回出现不同的错误代码，为了后续能快速定位到错误出现原因，http code起到了至关重要信息
+
+针对rails设计
+
+我们可以设计成一个concern，在application中include model这样继承子 aplication中的所有controller中都已具备response code 信息
+
+module Responses
+  extend ActiveSupport::Concern
+
+  def response_500 message=nil
+    # server error
+    $logger.info(message, '[ServerError]') #[ServerError] 为papertrailapp标记
+    render json: message, status: 500
+  end
+
+  def response_400 message=nil
+    # bad request
+    $logger.info(message, '[400]')
+    render json: message, status: 400
+  end
+
+  def response_401 message=nil
+    # unauthorized
+    $logger.info(message, '[401]')
+    render json: message, status: 401
+  end
+
+  def response_403 message=nil
+    # forbidden
+    $logger.info(message, '[403]')
+    render json: message, status: 403
+  end
+
+  def response_404 message=nil
+    # not found
+    $logger.info(message, '[404]')
+    render json: message, status: 404
+  end
+
+  def response_412 message=nil
+    # HTTP Status 412 （未满足前提条件）
+    $logger.info(message, '[412]')
+    render json: message, status: 412
+  end
+
+  def response_422 message=nil
+    # unprocessable entity
+    $logger.info(message, '[422]')
+    render json: message, status: 422
+  end
+
+  def response_201 message=nil
+    $logger.info(message, '[201]')
+    render json: message, status: 201
+  end
+
+  def response_200 message=nil
+    $logger.info(message, '[200]')
+    render json: message, status: 200
+  end
+
+end
