@@ -1,0 +1,27 @@
+class ApplicationRecord < ActiveRecord::Base
+  self.abstract_class = true
+
+  before_save :reset_db_id #fixed for bucardo
+  after_commit :update_redis_last_updated_at
+  after_destroy :update_redis_last_updated_at
+
+  def self.reids_last_updated_at
+    table_name = self.table_name
+    last_updated_at = $redis.get("#{table_name}:last_updated_at")
+    if last_updated_at.nil? || last_updated_at.to_i.zero?
+      column = self.column_names.select{|column| column.include?('updated_at')}.first
+      last_updated_at = begin self.maximum(column.to_sym).to_i rescue 0 end
+      $redis.set("#{table_name}:last_updated_at", last_updated_at)
+    end
+    return last_updated_at.to_i
+  end
+
+  private
+
+  def update_redis_last_updated_at
+    $redis.set("#{self.class.table_name}:last_updated_at", Time.now.to_i)
+  end
+
+end
+
+缓存至关重要，不仅影响客户的体验，还可以大大提升数据响应
