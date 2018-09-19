@@ -1,0 +1,25 @@
+module TokenConcern
+  extend ActiveSupport::Concern
+
+  def generate_token
+    issue_json = {
+      auth_token: self.auth_token,
+      user_id: self.id
+    }
+    JWT.encode(issue_json, Rails.application.secrets.secret_key_base)
+	end
+
+  def set_auth_token
+    if auth_token.blank?
+      self.auth_token = generate_authentication_token
+    end
+  end
+
+  def generate_authentication_token
+    loop do
+      token = Devise.friendly_token
+      break token unless self.class.where(auth_token: token).first
+    end
+  end
+
+end
