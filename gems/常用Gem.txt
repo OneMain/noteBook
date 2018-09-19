@@ -3,10 +3,10 @@
 created 星期六 10 2017
 
 
-# 性能调优
+#### 性能调优
 gem 'rack-mini-profiler'
 
-# 更好定位错误位置
+#### 更好定位错误位置
 bettor_errors & rails pannel
 gem 'better_error'
 
@@ -14,7 +14,7 @@ gem 'better_error'
 得到gem的PATH路径
 将其下的cache目录删除，再次执行gem安装的时候就不会出错了 
 
-# resque 
+#### resque 
 perform_later
   	ChangePartnerTransactionStatusJob.set(wait_until: 15.days).perform_later(partner_transaction)
 resque是多进程的，sidekiq是多线程的，相对于resque来说，sidekiq更节省内存
@@ -25,5 +25,7 @@ Resque.inline = true
 grape 写api 使用grape-swagger生成文档
 删除任务
 Resque.remove_delayed_selection{ |args| args[0]['job_class'] == 'TradeSendStatusCheckJob' && args[0]['arguments'][0] == trade_order.id }
+
+#JWT
 
   
