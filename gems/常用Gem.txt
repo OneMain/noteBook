@@ -61,8 +61,8 @@ class MainlandAlipayService
     out_trade_no = transaction_id
     total_amount = (pay_amount.to_f/100).round(2)
     timestamp = Time.now.strftime('%F %T')
-    body = "2ccm潮流时尚购物平台 - 交易号: #{transaction_id.gsub('wait_pay_transaction_', '')}"
-    subject = "2ccm潮流时尚购物平台 - 交易号: #{transaction_id.gsub('wait_pay_transaction_', '')}"
+    body = " 交易号: #{transaction_id.gsub('wait_pay_transaction_', '')}"
+    subject = "交易号: #{transaction_id.gsub('wait_pay_transaction_', '')}"
 
     data = "app_id=#{@app_id}&biz_content={\"timeout_express\":\"30m\",\"product_code\":\"QUICK_MSECURITY_PAY\","\
            "\"total_amount\":\"#{total_amount}\",\"subject\":\"#{subject}\",\"body\":\"#{body}\",\"out_trade_no\":\"#{out_trade_no}\"}&"\
@@ -77,7 +77,7 @@ class MainlandAlipayService
   def refund identification, amount
     out_request_no = "#{identification}_#{Time.now.to_i}"
     refund_amount = amount
-    refund_reason = '2ccm Refund'
+    refund_reason = 'Refund'
     timestamp= Time.now.strftime('%F %T')
 
     data= "app_id=#{@app_id}&biz_content={\"out_request_no\":\"#{out_request_no}\",\"out_trade_no\":\"#{identification}\",\"refund_amount\":\"#{refund_amount}\",\"refund_reason\":\"#{refund_reason}\"}&"\
