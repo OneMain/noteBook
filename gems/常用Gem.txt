@@ -28,4 +28,207 @@ Resque.remove_delayed_selection{ |args| args[0]['job_class'] == 'TradeSendStatus
 
 #JWT
 
+JWT.decode(token, Rails.application.secrets.secret_key_base)
+
+# 支付宝
+
+class MainlandAlipayService
+
+  def initialize
+    @app_id = 'xxxxx'
+    @pid = 'xxxx'
+    @seller_id = 'xxxx'
+    @notify_url = $setting['alipay']['pay_notify_url']
+    private_key_path = "#{Rails.root}/pem/mainland_rsa_private_key.pem"
+    @private_key_path = File.read(private_key_path)
+    public_key_path = "#{Rails.root}/pem/mainland_alipay_public_key.pub"
+    @public_key_path = File.read(public_key_path)
+    @visit_url = "https://openapi.alipay.com/gateway.do?"
+  end
+
+  def auth
+    data = "apiname=com.alipay.account.auth&app_id=#{@app_id}&app_name=mc&auth_type=AUTHACCOUNT&"\
+           "biz_type=openservice&method=alipay.open.auth.sdk.code.get&pid=#{@pid}&product_id=APP_FAST_LOGIN&"\
+           "scope=kuaijie&sign_type=RSA2&target_id=#{Time.now.to_i}#{rand(10000)+1}"
+
+    sign = generate_sign data
+    data += "&sign=#{sign}"
+    $logger.info('alipay auth string', data)
+    return data
+  end
+
+  def assemble_data transaction_id, pay_amount
+    out_trade_no = transaction_id
+    total_amount = (pay_amount.to_f/100).round(2)
+    timestamp = Time.now.strftime('%F %T')
+    body = "2ccm潮流时尚购物平台 - 交易号: #{transaction_id.gsub('wait_pay_transaction_', '')}"
+    subject = "2ccm潮流时尚购物平台 - 交易号: #{transaction_id.gsub('wait_pay_transaction_', '')}"
+
+    data = "app_id=#{@app_id}&biz_content={\"timeout_express\":\"30m\",\"product_code\":\"QUICK_MSECURITY_PAY\","\
+           "\"total_amount\":\"#{total_amount}\",\"subject\":\"#{subject}\",\"body\":\"#{body}\",\"out_trade_no\":\"#{out_trade_no}\"}&"\
+           "charset=utf-8&format=json&method=alipay.trade.app.pay&notify_url=#{@notify_url}&sign_type=RSA2&timestamp=#{timestamp}&version=1.0"
+
+    sign = generate_sign data
+    data += "&sign=#{sign}"
+    $logger.info('alipay callback string', data)
+    return data
+  end
+
+  def refund identification, amount
+    out_request_no = "#{identification}_#{Time.now.to_i}"
+    refund_amount = amount
+    refund_reason = '2ccm Refund'
+    timestamp= Time.now.strftime('%F %T')
+
+    data= "app_id=#{@app_id}&biz_content={\"out_request_no\":\"#{out_request_no}\",\"out_trade_no\":\"#{identification}\",\"refund_amount\":\"#{refund_amount}\",\"refund_reason\":\"#{refund_reason}\"}&"\
+          "charset=utf-8&format=json&method=alipay.trade.refund&sign_type=RSA2&timestamp=#{timestamp}&version=1.0"
+
+    sign = generate_sign data
+    data += "&sign=#{sign}"
+    response = RestClient::Request.execute(method: :get, url: @visit_url+data, timeout: 2, open_timeout: 2)
+    $logger.info("alipay refund: #{response.code}", response.body)
+    return response
+  end
+
+  def payment_query identification
+    timestamp= Time.now.strftime('%F %T')
+
+    data= "app_id=#{@app_id}&biz_content={\"out_trade_no\":\"#{identification}\"}&"\
+          "charset=utf-8&format=json&method=alipay.trade.query&sign_type=RSA2&"\
+          "timestamp=#{timestamp}&version=1.0"
+
+    sign = generate_sign data
+    data += "&sign=#{sign}"
+
+    begin
+      response = RestClient::Request.execute(method: :get, url: @visit_url+data, timeout: 2, open_timeout: 2)
+      result = JSON.parse(response.body)
+      $logger.info("payment_query body", result)
+      trade_status = result["alipay_trade_query_response"]['trade_status']
+      return  ['TRADE_SUCCESS', 'TRADE_FINISHED'].include?(trade_status) ? true : false
+    rescue => e
+      $logger.info("payment_query error", e)
+      return false
+    end
+  end
+
+  def from_alipay? params
+    sign, sign_type = params[:sign], params[:sign_type]
+    app_id, auth_app_id, body = params[:app_id], params[:auth_app_id], params[:body]
+    buyer_id, buyer_logon_id, buyer_pay_amount = params[:buyer_id], params[:buyer_logon_id], params[:buyer_pay_amount]
+    charset, fund_bill_list, gmt_create = params[:charset], params[:fund_bill_list], params[:gmt_create]
+    gmt_payment, invoice_amount, notify_id = params[:gmt_payment], params[:invoice_amount], params[:notify_id]
+    notify_time, notify_type, out_trade_no = params[:notify_time], params[:notify_type], params[:out_trade_no]
+    point_amount, receipt_amount, seller_email = params[:point_amount], params[:receipt_amount], params[:seller_email]
+    seller_id, subject, total_amount = params[:seller_id], params[:subject], params[:total_amount]
+    trade_no, trade_status, version = params[:trade_no], params[:trade_status], params[:version]
+    return false if app_id != @app_id
+    return false if seller_email != @seller_id
+    return payment_query out_trade_no
+  end
+
+  def transfer current_user, amount
+    app_today_transfer = $redis.get('app_today_transfer').to_i
+    return ['error', 'APP今日转账上限已到'] if app_today_transfer + amount > 1000000 #账号每日转账不能超过100万
+    return ['error', '单笔金额必须大于等于0.1元'] if amount < 0.1
+    return ['error', '个人支付宝账户单笔提现申请最高5万元'] if amount >= 50000
+    return ['error', '个人每日转账上限五万元'] if (current_user.daily_transfer/100.0).round(2) + amount > $daily_transfer_upper_limit
+    payee_account = current_user.alipay_payee_account
+    out_biz_no = "ZZ#{Time.now.to_i}#{rand(10000) + 1}"
+    timestamp  = Time.now.strftime('%F %T')
+    $logger.info("[转账]#{payee_account}", out_biz_no)
+    data = "app_id=#{@app_id}&biz_content={\"amount\":\"#{amount}\",\"out_biz_no\":\"#{out_biz_no}\","\
+           "\"payee_type\":\"ALIPAY_USERID\",\"payee_account\":\"#{payee_account}\"}&charset=utf-8&format=json&"\
+           "method=alipay.fund.trans.toaccount.transfer&sign_type=RSA2&timestamp=#{timestamp}&version=1.0"
+    sign = generate_sign data
+    data += "&sign=#{sign}"
+
+    response = RestClient::Request.execute(method: :get, url: @visit_url+data, timeout: 2, open_timeout: 2)
+    $logger.info("alipay transfer: #{out_biz_no}", response.body)
+    result = JSON.parse(response.body)
+    return ['error', '转账失败'] unless result['alipay_fund_trans_toaccount_transfer_response']['code'] == '10000'
+    app_today_transfer += amount
+    $redis.set('app_today_transfer', app_today_transfer, ex: Time.now.end_of_day.to_i.seconds - Time.now.to_i.seconds)
+    return ['success', '转账成功']
+  end
+
+  def transfer_query out_biz_no
+    timestamp = Time.now.strftime('%F %T')
+    data = "app_id=#{@app_id}&biz_content={\"out_biz_no\":\"#{out_biz_no}\"}&charset=utf-8&"\
+           "method=alipay.fund.trans.order.query&sign_type=RSA2&timestamp=#{timestamp}&version=1.0"
+    sign = generate_sign data
+    data += "&sign=#{sign}"
+
+    response = RestClient::Request.execute(method: :get, url: @visit_url+data, timeout: 2, open_timeout: 2)
+    $logger.info("alipay transfer query: #{out_biz_no}", response.body)
+    return JSON.parse(response.body)
+  end
+
+  def fetch_auth_info auth_code
+    auth_token = fetch_auth_token auth_code
+    return nil, nil if auth_token.nil?
+    fetch_user_info auth_token
+  end
+
+  private
+
+  def generate_sign data
+    pri = OpenSSL::PKey::RSA.new(@private_key_path)
+    digest = OpenSSL::Digest::SHA256.new
+    signature = pri.sign(digest, data.force_encoding("utf-8"))
+    sign = CGI.escape(Base64.encode64(signature))
+    sign = sign.delete("\n").delete("\r")
+    return sign
+  end
+
+  def check_sign data, sign
+    pub = OpenSSL::PKey::RSA.new(@public_key_path)
+    digest = OpenSSL::Digest::SHA256.new
+    _sign = Base64.decode64(sign)
+    return pub.verify(digest, _sign, data)
+  end
+
+  def fetch_auth_token auth_code
+    timestamp = Time.now.strftime('%F %T')
+
+    data = "app_id=#{@app_id}&charset=utf-8&code=#{auth_code}&format=JSON&grant_type=authorization_code&"\
+           "method=alipay.system.oauth.token&sign_type=RSA2&timestamp=#{timestamp}&version=1.0"
+
+    sign = generate_sign data
+    data += "&sign=#{sign}"
+
+    response = RestClient::Request.execute(method: :get, url: @visit_url+data, timeout: 2, open_timeout: 2)
+    $logger.info("alipay fetch access token:", response.body)
+    begin
+      result = JSON.parse(response.body)
+      return result['alipay_system_oauth_token_response']['access_token']
+    rescue => e
+      $logger.info('fetch access token error', e.message)
+      return nil
+    end
+  end
+
+  def fetch_user_info auth_token
+    timestamp = Time.now.strftime('%F %T')
+
+    data = "app_id=#{@app_id}&auth_token=#{auth_token}&charset=utf-8&format=JSON&"\
+           "method=alipay.user.info.share&sign_type=RSA2&timestamp=#{timestamp}&version=1.0"
+
+    sign = generate_sign data
+    data += "&sign=#{sign}"
+
+    response = RestClient::Request.execute(method: :get, url: @visit_url+data, timeout: 2, open_timeout: 2)
+    $logger.info("alipay fetch user info:", response.body)
+    begin
+      result = JSON.parse(response.body)
+      return [result['alipay_user_info_share_response']['user_id'], result['alipay_user_info_share_response']['nick_name']]
+    rescue => e
+      $logger.info('fetch user info error', e.message)
+      return [nil, nil]
+    end
+  end
+
+end
+
+
   
