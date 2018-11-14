@@ -140,3 +140,4 @@
     
     User.defined_enums,获取这个类中定义的枚举值
   17: ActiveRecord::Base.connection.tables，获取database中表
+  18: Time.new(* time_array)   # time_array 是个数组,  * Time_array 会分解为 eg: [1,2,3] -> 1,2,3
