@@ -142,3 +142,5 @@
   17: ActiveRecord::Base.connection.tables，获取database中表
   18: Time.new(* time_array)   # time_array 是个数组,  * Time_array 会分解为 eg: [1,2,3] -> 1,2,3
   19: git config --global credential.helper store  git 设置不用每次都输入 账号密码
+  20: 驼峰下划线互换  classify 下划线转驼峰
+                   underscore 驼峰转下划线
