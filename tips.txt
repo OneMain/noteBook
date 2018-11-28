@@ -144,3 +144,13 @@
   19: git config --global credential.helper store  git 设置不用每次都输入 账号密码
   20: 驼峰下划线互换  classify 下划线转驼峰
                    underscore 驼峰转下划线
+  21: 动态添加类,以及指定其父类信息:
+        def template_type_constantize(template_type)
+          unless Generate.const_defined?(template_type)
+            template_super = Generate::Template.template_super(template_type).constantize
+            Generate.const_set(template_type.split("::").last, Class.new(template_super))
+          else
+            template_type.constantize
+          end
+        end
+
