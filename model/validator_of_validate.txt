@@ -1,0 +1,104 @@
+===================================================absence.rb原码===================================
+module ActiveModel
+  module Validations
+    # == \Active \Model Absence Validator
+    class AbsenceValidator < EachValidator #:nodoc:
+      def validate_each(record, attr_name, value)
+        record.errors.add(attr_name, :present, options) if value.present?
+      end
+    end
+
+    module HelperMethods
+      # Validates that the specified attributes are blank (as defined by
+      # Object#blank?). Happens by default on save.
+      #
+      #   class Person < ActiveRecord::Base
+      #     validates_absence_of :first_name
+      #   end
+      #
+      # The first_name attribute must be in the object and it must be blank.
+      #
+      # Configuration options:
+      # * <tt>:message</tt> - A custom error message (default is: "must be blank").
+      #
+      # There is also a list of default options supported by every validator:
+      # +:if+, +:unless+, +:on+, +:allow_nil+, +:allow_blank+, and +:strict+.
+      # See <tt>ActiveModel::Validations#validates</tt> for more information
+      def validates_absence_of(*attr_names)
+        validates_with AbsenceValidator, _merge_attributes(attr_names)
+      end
+    end
+  end
+end
+
+================================用法==================================
+在model中我们经常会使用validates: :password, presence: true
+实际调用的是active_model/validations/validates.rb中的validates方法
+=======validates方法源码========
+def validates(*attributes)
+    defaults = attributes.extract_options!.dup
+    validations = defaults.slice!(*_validates_default_keys)
+
+    raise ArgumentError, "You need to supply at least one attribute" if attributes.empty?
+    raise ArgumentError, "You need to supply at least one validation" if validations.empty?
+
+    defaults[:attributes] = attributes
+
+    validations.each do |key, options|
+      next unless options
+      key = "#{key.to_s.camelize}Validator"
+
+      begin
+        validator = key.include?("::".freeze) ? key.constantize : const_get(key)
+      rescue NameError
+        raise ArgumentError, "Unknown validator: '#{key}'"
+      end
+
+      validates_with(validator, defaults.merge(_parse_validates_options(options)))
+    end
+end
+
+def _validates_default_keys
+  [:if, :unless, :on, :allow_blank, :allow_nil, :strict]
+end
+
+def validates_with(*args, &block)
+  options = args.extract_options!
+  options[:class] = self
+
+  args.each do |klass|
+    validator = klass.new(options, &block)
+
+    if validator.respond_to?(:attributes) && !validator.attributes.empty?
+      validator.attributes.each do |attribute|
+        _validators[attribute.to_sym] << validator
+      end
+    else
+      _validators[nil] << validator
+    end
+
+    validate(validator, options)
+  end
+end
+
+以 validates :password, presence: { if: :password_required?, message: 'is forgotten.' }, confirmation: true 为例
+1:validations => presence: { if: :password_required?, message: 'is forgotten.' }, confirmation: true 
+2:validator = presenceValidator, confirmationValidator
+3:调用validates_with mehod, validate_with 中調用validator.rb中的validate方法,validate方法中調用validate_each 方法,(子類必须实现valudate_each 方法)
+4: presenceValidator,和confirmationValidator中的validate_each方法
+完毕!!!!!
+
+
+
+======list of options  that could be used along with validators=======
+on:  可以在制定的action中验证是否nil  eg:     on: :create,  on: [:create, :custom_validation_context](不写on意味着所有的操作都执行validate)
+if:  proc or 自定义方法返回true或者false eg: if: Proc.new { |user| user.signup_step > 2 }
+unless:  用法同if一样
+allow_nil:如果arrtibute 是nil跳过验证
+allow_blank: 如果attribute 是blank跳过验证
+
+validates :password, presence: true, confirmation: true, if: :password_required?
+validates :password, presence: { if: :password_required?, message: 'is forgotten.' }, confirmation: true
+note: +:if+, +:unless+, +:on+, +:allow_blank+, +:allow_nil+ 这些方法可以被赋值给一个指定的validator
+
+
